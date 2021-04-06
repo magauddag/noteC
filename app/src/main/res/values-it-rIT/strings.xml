@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">noteC</string>
+    <string name="search">Cerca</string>
+    <string name="settings">Impostazioni</string>
+    <string name="note_title">Inserisci un titolo</string>
+    <string name="category">Categoria</string>
+    <string name="note_body">Scrivi qui la tua nota</string>
+    <string name="save">Salva</string>
+    <string name="share">Condividi</string>
+    <string name="take_a_photo">Scatta una foto</string>
+    <string name="choose_photo">Scegli una foto esistente</string>
+    <string name="add_checklist">Aggiungi una checklist</string>
+</resources>

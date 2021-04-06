@@ -27,6 +27,9 @@ android {
 
 dependencies {
 
+    implementation 'androidx.wear:wear:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    compileOnly 'com.google.android.wearable:wearable:2.5.0'
     def lifecycle_version = "2.3.1"
     def room_version = "2.2.6"
 
