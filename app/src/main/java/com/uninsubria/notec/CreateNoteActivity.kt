@@ -1,18 +1,20 @@
 package com.uninsubria.notec
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.*
 import android.text.util.Linkify
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.uninsubria.notec.data.Folder
@@ -34,6 +36,7 @@ class CreateNoteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_note)
 
         setUpToolbar()
+        setUpSpinner()
         setUpBottomSheet()
         manageLinksEditText()
 
@@ -73,7 +76,7 @@ class CreateNoteActivity : AppCompatActivity() {
 
         var noteTitle = et_title.text.toString().trim()
         val noteBody = et_body.text.toString().trim()
-        val category = et_category.text.toString()
+        val category = spinner.selectedItem.toString().trim()
 
         if (TextUtils.isEmpty(noteTitle)) {
 
@@ -90,8 +93,10 @@ class CreateNoteActivity : AppCompatActivity() {
         val noteViewModel= ViewModelProvider(this, factory).get(NoteViewModel::class.java)
         val folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
 
-        val note = Note(0, 0, noteTitle, noteBody, util.getData(), category )
-        val folder = Folder("cacca")
+        val note = Note(0, 0, noteTitle, noteBody,
+            util.getDataShort(), util.lowerCaseNotFirst(category))
+
+        val folder = Folder(util.lowerCaseNotFirst(category))
 
         noteViewModel.insert(note)
         folderViewModel.insert(folder)
@@ -127,6 +132,14 @@ class CreateNoteActivity : AppCompatActivity() {
         myToolbar2.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    private fun setUpSpinner() {
+
+        var list = arrayListOf<String>("Fare la spesaaaa", "Libri", "Spesa", "Password")
+        val arrayAdapter = ArrayAdapter<String>(this, R.layout.style_spinner, list)
+
+        spinner.adapter = arrayAdapter
 
     }
 
@@ -155,6 +168,10 @@ class CreateNoteActivity : AppCompatActivity() {
                 }
             this.setBottomSheetCallback(bottomSheetBehaviorCallback)
             this.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        linearLayout4.setOnClickListener {
+            showDialog()
         }
     }
 
@@ -197,5 +214,26 @@ class CreateNoteActivity : AppCompatActivity() {
                 Linkify.addLinks(s, Linkify.WEB_URLS)
             }
         })
+    }
+
+    private fun showDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.add_category_dialog)
+
+        val yesBtn = dialog.findViewById(R.id.btn_confirm) as Button
+        val noBtn = dialog.findViewById(R.id.button_cancel) as Button
+
+        yesBtn.setOnClickListener {
+            //TODO("Add confirm function")
+            dialog.dismiss()
+        }
+        noBtn.setOnClickListener {
+            //TODO("Add cancel function")
+            dialog.dismiss() }
+        dialog.show()
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
     }
 }

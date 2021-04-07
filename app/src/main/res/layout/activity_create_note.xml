@@ -71,20 +71,18 @@
 
             <View android:layout_width="5dp"
                   android:layout_height="25dp"
+                  android:layout_gravity="center_vertical"
                   android:paddingVertical="10dp"
-                  android:background="@color/colorAccent">
+                  android:background="@drawable/category_view">
             </View>
 
-            <TextView
-                    android:id="@+id/et_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/category"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="10dp"
-                    android:textColor="@color/opaqueTextColor">
+            <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="wrap_content">
 
-            </TextView>
+            </Spinner>
 
 
         </LinearLayout>

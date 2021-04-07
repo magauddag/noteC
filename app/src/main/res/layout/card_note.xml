@@ -63,16 +63,17 @@
         </TextView>
         <TextView
                 android:id="@+id/tv_category"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/futura_medium"
                 android:textSize="10sp"
                 android:text="Category"
+                android:gravity="end"
                 android:paddingVertical="17dp"
                 android:paddingHorizontal="15dp"
                 android:textColor="@color/opaqueTextColor"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@+id/tv_data">
 
         </TextView>
         <ImageView

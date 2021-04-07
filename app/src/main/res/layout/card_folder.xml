@@ -6,7 +6,6 @@
         android:layout_height="wrap_content"
         app:cardElevation="1dp"
         app:cardUseCompatPadding="true"
-        android:paddingHorizontal="10dp"
         app:cardCornerRadius="20dp"
         app:cardBackgroundColor="@color/colorOnSurface">
 
@@ -29,9 +28,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Categoria"
+                android:paddingHorizontal="10dp"
                 android:paddingBottom="20dp"
                 android:paddingTop="15dp"
                 android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
                 android:textColor="@color/text_color_primary"
                 android:textSize="18sp"
                 android:layout_below="@+id/iv_folder">

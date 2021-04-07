@@ -15,4 +15,7 @@
     <string name="all">Tutte</string>
     <string name="categories">Categorie</string>
     <string name="shared">Da noteC</string>
+    <string name="add_category">Aggiungi categoria</string>
+    <string name="confirm">Conferma</string>
+    <string name="cancel">Annulla</string>
 </resources>

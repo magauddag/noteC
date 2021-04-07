@@ -16,13 +16,25 @@ class Util {
     @SuppressLint("NewApi")
     fun getData (): String {
         val currentDate = LocalDateTime.now()
-        val formatter = DateTimeFormatter.ofPattern("d MMMM, kk:mm")
+        val formatter = DateTimeFormatter.ofPattern("d MMM, kk:mm")
         val formatted = currentDate.format(formatter)
 
         return formatted
     }
 
-    fun generateCardList(size: Int): ArrayList<Note> {
+    fun getDataShort (): String {
+        val currentDate = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("d MMM")
+        val formatted = currentDate.format(formatter)
+
+        return formatted
+    }
+
+    fun lowerCaseNotFirst(str: String): String {
+        return str.substring(0, 1) + str.substring(1, str.length).toLowerCase()
+    }
+
+    /*fun generateCardList(size: Int): ArrayList<Note> {
 
         val list = ArrayList<Note>()
         val util = Util()
@@ -33,7 +45,7 @@ class Util {
         }
 
         return list
-    }
+    }*/
 
     /*fun generateFolderList(size: Int): ArrayList<Folder> {
 

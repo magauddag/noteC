@@ -15,5 +15,8 @@
     <string name="all">All</string>
     <string name="categories">Categories</string>
     <string name="shared">From noteC</string>
+    <string name="add_category">Add category</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
