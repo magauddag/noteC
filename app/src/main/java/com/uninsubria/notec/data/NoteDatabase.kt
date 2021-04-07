@@ -12,10 +12,11 @@ import java.security.AccessControlContext
 
 // TODO: ExportSchema = False??
 
-@Database (entities = [Note::class], version = 1)
+@Database (entities = [Note::class, Folder::class], version = 3)
 abstract class NoteDatabase: RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
+    abstract fun folderDao(): FolderDao
 
     //Make the database a singleton
     companion object {

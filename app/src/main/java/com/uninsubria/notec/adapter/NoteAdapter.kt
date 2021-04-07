@@ -11,10 +11,11 @@ import com.uninsubria.notec.data.Note
 import kotlinx.android.synthetic.main.card_note.view.*
 import kotlinx.android.synthetic.main.card_note_no_image.view.*
 
-class NoteAdapter(var notes: ArrayList<Note>): RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
+class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
 
-    val layout_image = R.layout.card_note
-    val layout_no_image = R.layout.card_note_no_image
+    private val layout_image = R.layout.card_note
+    private val layout_no_image = R.layout.card_note_no_image
+    private var notes = emptyList<Note>()
 
     inner class NoteViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.tv_title
@@ -71,5 +72,10 @@ class NoteAdapter(var notes: ArrayList<Note>): RecyclerView.Adapter<RecyclerView
             itemHolder.date.text = currentItem.data
             itemHolder.category.text = currentItem.category
         }
+    }
+
+    fun setData (notes : List<Note>) {
+        this.notes = notes
+        notifyDataSetChanged()
     }
 }

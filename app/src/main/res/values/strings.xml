@@ -11,5 +11,9 @@
     <string name="take_a_photo">Take a photo</string>
     <string name="choose_photo">Choose photo from gallery</string>
     <string name="add_checklist">Add checklist</string>
+    <string name="success">Successfully added!</string>
+    <string name="all">All</string>
+    <string name="categories">Categories</string>
+    <string name="shared">From noteC</string>
 
 </resources>

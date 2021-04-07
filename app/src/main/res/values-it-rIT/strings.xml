@@ -9,6 +9,10 @@
     <string name="save">Salva</string>
     <string name="share">Condividi</string>
     <string name="take_a_photo">Scatta una foto</string>
-    <string name="choose_photo">Scegli una foto esistente</string>
+    <string name="choose_photo">Scegli una foto dalla galleria</string>
     <string name="add_checklist">Aggiungi una checklist</string>
+    <string name="success">Nota salvata!</string>
+    <string name="all">Tutte</string>
+    <string name="categories">Categorie</string>
+    <string name="shared">Da noteC</string>
 </resources>

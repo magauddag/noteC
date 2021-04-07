@@ -9,7 +9,9 @@ import com.uninsubria.notec.R
 import com.uninsubria.notec.data.Folder
 import kotlinx.android.synthetic.main.card_folder.view.*
 
-class FolderAdapter(var folders: ArrayList<Folder>): RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
+class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
+
+    private var folders = emptyList<Folder>()
 
     inner class FolderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var category: TextView = itemView.tv_folder_category
@@ -28,5 +30,10 @@ class FolderAdapter(var folders: ArrayList<Folder>): RecyclerView.Adapter<Folder
         val currentItem = folders[position]
 
         holder.category.text = currentItem.category
+    }
+
+    fun setData(folders: List<Folder>) {
+        this.folders = folders
+        notifyDataSetChanged()
     }
 }

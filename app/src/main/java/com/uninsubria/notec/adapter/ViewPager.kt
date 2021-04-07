@@ -11,7 +11,6 @@ class ViewPager(supportFragmentManager: FragmentManager):
     private val mFragmentTitle = ArrayList<String>()
 
 
-
     override fun getItem(position: Int): Fragment {
         return mFragmentList[position]
     }

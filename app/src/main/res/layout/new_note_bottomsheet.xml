@@ -7,17 +7,17 @@
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
         android:paddingBottom="24dp"
-        android:background="@color/colorOnSurface"
+        android:background="@drawable/bottomsheet_radious"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:behavior_peekHeight="70dp"
+        app:behavior_peekHeight="60dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 
     <LinearLayout
             android:id="@+id/linearLayoutImage"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="60dp"
             android:orientation="vertical"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
@@ -49,14 +49,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_camera"/>
+
         <TextView
                 android:id="@+id/textView1"
                 android:text="@string/take_a_photo"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center"
                 android:layout_marginStart="24dp"
+                android:textColor="@color/text_color_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"/>
+                android:textSize="17sp"/>
 
     </LinearLayout>
 
@@ -81,10 +83,11 @@
                 android:id="@+id/textView2"
                 android:text="@string/choose_photo"
                 android:layout_marginStart="24dp"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center"
+                android:textColor="@color/text_color_secondary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"/>
+                android:textSize="17sp"/>
 
 
     </LinearLayout>
@@ -107,11 +110,12 @@
         <TextView
                 android:id="@+id/textView3"
                 android:text="@string/add_checklist"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center"
                 android:layout_width="match_parent"
+                android:textColor="@color/text_color_secondary"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:textSize="15sp"/>
+                android:textSize="17sp"/>
 
     </LinearLayout>
 

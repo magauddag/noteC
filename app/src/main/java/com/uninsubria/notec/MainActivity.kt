@@ -11,6 +11,7 @@ import com.uninsubria.notec.fragment.FoldersFragment
 import com.uninsubria.notec.fragment.NotesFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            R.id.mi_settings -> Toast.makeText(this, "Impostazioni", Toast.LENGTH_SHORT).show()
+            R.id.mi_settings -> Toast.makeText(this, getString(R.string.settings), Toast.LENGTH_SHORT).show()
         }
         return true
     }
@@ -43,11 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         val adapter: ViewPager = ViewPager(supportFragmentManager)
 
-        adapter.addFragment(NotesFragment(), "All")
-        adapter.addFragment(FoldersFragment(), "Folders")
+        adapter.addFragment(NotesFragment(), getString(R.string.all))
+        adapter.addFragment(FoldersFragment(), getString(R.string.categories))
 
         viewPagerHome.adapter = adapter
     }
-
-
 }

@@ -5,18 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.uninsubria.notec.R
 import com.uninsubria.notec.adapter.NoteAdapter
-import com.uninsubria.notec.data.Note
-import com.uninsubria.notec.util.Util
+import com.uninsubria.notec.data.NoteViewModel
 import kotlinx.android.synthetic.main.fragment_notes.*
 
-
 class NotesFragment : Fragment() {
-
-    var notes = ArrayList<Note>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,20 +26,17 @@ class NotesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val util = Util()
-
-        notes = util.generateCardList(15)
-        /*var test = "This is pretty late in response, but for anyone else that is looking for this, you can do the following code to manually round the corners, " +
-                "This is pretty late in response, but for anyone else that is looking for this, you can do the following code to manually round the corners"
-
-
-        cards.add(Card(0, "Titolo", test, "Data", "Categoria"))
-        cards.add(Card(R.drawable.a10f578, "Titolo", "ah boh non lo so io cosa scrivere ora vediamo ", "Data", "Categoria"))
-        cards.add(Card(R.drawable.a10f578, "Titolo", test, "Data", "Categoria"))*/
-        val adapter = NoteAdapter(notes)
-
+        val adapter = NoteAdapter()
         recyclerViewNotes.adapter = adapter
         recyclerViewNotes.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+
+        val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        val noteViewModel= ViewModelProvider(this, factory).get(NoteViewModel::class.java)
+
+
+        noteViewModel.getAllNotes().observe(viewLifecycleOwner, Observer { notes ->
+            adapter.setData(notes)
+        })
     }
 
     companion object {
