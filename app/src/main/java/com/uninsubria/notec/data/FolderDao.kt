@@ -15,5 +15,7 @@ interface FolderDao {
     @Query("SELECT * FROM folder_table ORDER BY category ASC")
     fun getAllFolders() : LiveData<List<Folder>>
 
+    @Query ("SELECT category FROM folder_table ORDER BY category ASC")
+    fun getAllCategories() :  LiveData<List<String>>
 
 }

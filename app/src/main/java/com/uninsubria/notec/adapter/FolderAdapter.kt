@@ -12,9 +12,22 @@ import kotlinx.android.synthetic.main.card_folder.view.*
 class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
     private var folders = emptyList<Folder>()
+    var onItemClick: ((Folder) -> Unit)? = null
+    var onItemLongClick: ((Folder) -> Unit)? = null
 
     inner class FolderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         var category: TextView = itemView.tv_folder_category
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(folders[adapterPosition])
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(folders[adapterPosition])
+                return@setOnLongClickListener true
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {

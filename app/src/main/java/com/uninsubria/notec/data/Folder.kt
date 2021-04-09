@@ -11,6 +11,7 @@ data class Folder(
     /*@PrimaryKey(autoGenerate = true)
     var id: Int,*/
 
+    @ColumnInfo (name = "category")
     @PrimaryKey
     var category: String,
 

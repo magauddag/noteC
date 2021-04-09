@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 class FolderRepository(private val folderDao: FolderDao) {
 
     val readAllData: LiveData<List<Folder>> = folderDao.getAllFolders()
+    val readAllCategories: LiveData<List<String>> = folderDao.getAllCategories()
 
     suspend fun insert(folder: Folder) {
         folderDao.insert(folder)
@@ -14,5 +15,8 @@ class FolderRepository(private val folderDao: FolderDao) {
         folderDao.delete(folder)
     }
 
+    /*suspend fun readAllCategories (): List<String> {
+        return folderDao.getAllCategories()
+    }*/
 
 }

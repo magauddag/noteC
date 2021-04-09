@@ -16,6 +16,9 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     private val layout_image = R.layout.card_note
     private val layout_no_image = R.layout.card_note_no_image
     private var notes = emptyList<Note>()
+    var onItemClick: ((Note) -> Unit)? = null
+    var onItemLongClick: ((Note) -> Unit)? = null
+
 
     inner class NoteViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.tv_title
@@ -23,6 +26,17 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
         val image: ImageView = itemView.imageView
         val date: TextView = itemView.tv_data
         val category: TextView = itemView.tv_category
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(notes[adapterPosition])
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(notes[adapterPosition])
+                return@setOnLongClickListener true
+            }
+        }
     }
 
     inner class NoteViewHolder2 (itemView : View): RecyclerView.ViewHolder(itemView) {
@@ -30,6 +44,17 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
         val body: TextView = itemView.tv_body2
         val date: TextView = itemView.tv_data2
         val category: TextView = itemView.tv_category2
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(notes[adapterPosition])
+            }
+
+            itemView.setOnLongClickListener {
+                onItemLongClick?.invoke(notes[adapterPosition])
+                return@setOnLongClickListener true
+            }
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -64,8 +89,7 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
             itemHolder.image.setImageResource(currentItem.image)
             itemHolder.date.text = currentItem.data
             itemHolder.category.text = currentItem.category
-        }
-        else {
+        } else {
             val itemHolder = holder as NoteViewHolder2
             itemHolder.title.text = currentItem.title
             itemHolder.body.text = currentItem.body

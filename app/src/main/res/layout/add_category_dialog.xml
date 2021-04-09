@@ -12,7 +12,7 @@
             android:id="@+id/new_category_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Add a new category"
+            android:text="@string/add_a_new_category"
             android:textColor="@color/text_color_secondary"
             android:textSize="20sp"
             android:gravity="center_horizontal"
@@ -23,13 +23,15 @@
     </TextView>
 
     <EditText
+            android:id="@+id/et_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/text_color_secondary"
             android:textSize="17sp"
             android:inputType="text"
             android:maxLength="16"
-            android:hint="Category"
+            android:hint="@string/category"
+            android:text="Categoria"
             android:background="@drawable/custom_et"
             android:textColorHint="@color/opaqueTextColor"
             android:drawableStart="@drawable/custom_category_icon"
@@ -40,8 +42,7 @@
             app:layout_constraintTop_toBottomOf="@+id/new_category_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/editText">
+            app:layout_constraintEnd_toEndOf="parent">
 
     </EditText>
 

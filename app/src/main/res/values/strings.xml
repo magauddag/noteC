@@ -18,5 +18,8 @@
     <string name="add_category">Add category</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="add_a_new_category">Add a new category</string>
+    <string name="update_message">Updated correctly!</string>
+
 
 </resources>

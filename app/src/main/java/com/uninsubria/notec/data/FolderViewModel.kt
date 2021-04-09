@@ -10,12 +10,14 @@ import kotlinx.coroutines.launch
 class FolderViewModel(application: Application): AndroidViewModel(application) {
 
     private val readAllFolder: LiveData<List<Folder>>
+    private val readAllCategories: LiveData<List<String>>
     private val repository: FolderRepository
 
     init {
         val folderDao = NoteDatabase.getDatabase(application).folderDao()
         repository = FolderRepository(folderDao)
         readAllFolder = repository.readAllData
+        readAllCategories = repository.readAllCategories
     }
 
     fun insert (folder: Folder) {
@@ -32,6 +34,10 @@ class FolderViewModel(application: Application): AndroidViewModel(application) {
 
     fun getAllFolders(): LiveData<List<Folder>> {
         return readAllFolder
+    }
+
+    fun getAllCategories(): LiveData<List<String>> {
+        return readAllCategories
     }
 
 }

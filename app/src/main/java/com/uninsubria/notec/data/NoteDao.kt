@@ -12,10 +12,10 @@ interface NoteDao {
     suspend fun insert (note: Note)
 
     @Update
-    fun update (note: Note)
+    suspend fun update (note: Note)
 
     @Delete
-    fun delete (note: Note)
+    suspend fun delete (note: Note)
 
     @Query("DELETE FROM note_table")
     fun deleteAllNotes()

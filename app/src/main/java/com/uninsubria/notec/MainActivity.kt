@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(myToolbar)
         setupViewPager()
-
         tab_layout.setupWithViewPager(viewPagerHome)
+
         fab_button.setOnClickListener { view ->
             val intent = Intent(this, CreateNoteActivity::class.java)
             startActivity(intent)
@@ -48,5 +48,9 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(FoldersFragment(), getString(R.string.categories))
 
         viewPagerHome.adapter = adapter
+    }
+
+    override fun onBackPressed() {
+        finishAffinity()
     }
 }
