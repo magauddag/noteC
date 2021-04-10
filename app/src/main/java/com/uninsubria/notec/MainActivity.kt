@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,24 +30,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_activity_menu, menu)
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent = Intent(this, SearchableActivity::class.java)
 
         when (item.itemId) {
             R.id.mi_settings -> Toast.makeText(this, getString(R.string.settings), Toast.LENGTH_SHORT).show()
+            R.id.mi_search -> startActivity(intent)
         }
         return true
     }
 
     private fun setupViewPager() {
 
-        val adapter: ViewPager = ViewPager(supportFragmentManager)
-
+        val adapter = ViewPager(supportFragmentManager)
         adapter.addFragment(NotesFragment(), getString(R.string.all))
         adapter.addFragment(FoldersFragment(), getString(R.string.categories))
-
         viewPagerHome.adapter = adapter
     }
 

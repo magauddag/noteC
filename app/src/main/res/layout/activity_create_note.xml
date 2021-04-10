@@ -45,7 +45,7 @@
                 android:textSize="30sp"
                 android:hint="@string/note_title"
                 android:maxLength="16"
-                android:inputType="text"
+                android:inputType="textCapSentences"
                 android:textColorHint="#C4EDEDEE"
                 android:textColor="@color/text_color_primary">
         </EditText>
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/colorBackground"
-                android:inputType="textMultiLine"
+                android:inputType="textCapSentences|textMultiLine"
                 android:singleLine="false"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="60dp"

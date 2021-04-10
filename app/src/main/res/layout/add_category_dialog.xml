@@ -28,10 +28,9 @@
             android:layout_height="wrap_content"
             android:textColor="@color/text_color_secondary"
             android:textSize="17sp"
-            android:inputType="text"
+            android:inputType="textCapSentences|text"
             android:maxLength="16"
             android:hint="@string/category"
-            android:text="Categoria"
             android:background="@drawable/custom_et"
             android:textColorHint="@color/opaqueTextColor"
             android:drawableStart="@drawable/custom_category_icon"
@@ -55,7 +54,8 @@
             android:background="@color/colorOnSurface"
             android:stateListAnimator="@null"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@+id/button_cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_cancel"
             app:layout_constraintHorizontal_bias="0.5"/>
     <Button
             android:id="@+id/button_cancel"
@@ -65,8 +65,10 @@
             android:background="@color/colorOnSurface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/btn_confirm"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/btn_confirm"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

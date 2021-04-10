@@ -20,6 +20,13 @@
     <string name="cancel">Cancel</string>
     <string name="add_a_new_category">Add a new category</string>
     <string name="update_message">Updated correctly!</string>
+    <string name="category_added">added!</string>
+    <string name="empty_category">Category field must not be empty</string>
+    <string name="choose_category">Choose category..</string>
+    <string name="title_note1">Your first note!</string>
+    <string name="title_note2">Checklist!</string>
+    <string name="title_note3">Images!</string>
+    <string name="search_note">Search notes</string>
 
 
 </resources>

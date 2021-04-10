@@ -17,4 +17,6 @@ data class Note (
 
     var data: String,
 
-    var category: String)
+    var category: String,
+
+    var selected: Boolean = false)

@@ -14,9 +14,4 @@ class FolderRepository(private val folderDao: FolderDao) {
     suspend fun delete(folder: Folder) {
         folderDao.delete(folder)
     }
-
-    /*suspend fun readAllCategories (): List<String> {
-        return folderDao.getAllCategories()
-    }*/
-
 }

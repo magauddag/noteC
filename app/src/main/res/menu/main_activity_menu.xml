@@ -8,8 +8,7 @@
           android:icon="@drawable/ic_search"
           android:orderInCategory="1"
           app:iconTint="@color/opaqueTextColor"
-          app:showAsAction="ifRoom|collapseActionView"
-          app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+          app:showAsAction="ifRoom|collapseActionView"/>
 
     <item
             android:id="@+id/mi_settings"

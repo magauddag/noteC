@@ -19,7 +19,6 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     var onItemClick: ((Note) -> Unit)? = null
     var onItemLongClick: ((Note) -> Unit)? = null
 
-
     inner class NoteViewHolder (itemView : View): RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.tv_title
         val body: TextView = itemView.tv_body
@@ -58,10 +57,10 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (notes[position].image == 0)
-            return layout_no_image
+        return if (notes[position].image == 0)
+            layout_no_image
         else
-            return layout_image
+            layout_image
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

@@ -9,7 +9,7 @@ import androidx.room.*
 interface NoteDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert (note: Note)
+    fun insert (note: Note)
 
     @Update
     suspend fun update (note: Note)
@@ -18,9 +18,12 @@ interface NoteDao {
     suspend fun delete (note: Note)
 
     @Query("DELETE FROM note_table")
-    fun deleteAllNotes()
+    suspend fun deleteAllNotes()
 
     @Query("SELECT * FROM note_table ORDER BY id ASC")
     fun getAllNotes() : LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE title LIKE :filterQuery OR body LIKE :filterQuery OR category LIKE :filterQuery")
+    fun searchDatabase(filterQuery: String) : LiveData<List<Note>>
 
 }

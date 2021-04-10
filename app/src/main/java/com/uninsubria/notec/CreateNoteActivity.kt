@@ -1,26 +1,23 @@
 package com.uninsubria.notec
 
-import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.util.Linkify
 import android.view.*
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.uninsubria.notec.data.Folder
 import com.uninsubria.notec.data.FolderViewModel
 import com.uninsubria.notec.data.Note
@@ -29,11 +26,11 @@ import com.uninsubria.notec.fragment.CustomDialog
 import com.uninsubria.notec.util.MyMovementMethod
 import com.uninsubria.notec.util.Util
 import kotlinx.android.synthetic.main.activity_create_note.*
-import kotlinx.android.synthetic.main.add_category_dialog.*
 import kotlinx.android.synthetic.main.new_note_bottomsheet.*
+import kotlinx.android.synthetic.main.style_spinner.*
 
 
-class CreateNoteActivity : AppCompatActivity() {
+class CreateNoteActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
 
     object IntentId {
         const val EXTRA_ID = "com.uninsubria.notec.EXTRA_ID"
@@ -46,24 +43,27 @@ class CreateNoteActivity : AppCompatActivity() {
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var folderViewModel: FolderViewModel
-
+    private lateinit var adapter: ArrayAdapter<String>
+    private lateinit var categoryList: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_note)
+
+        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
+        folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
+        categoryList = arrayListOf<String>(getString(R.string.choose_category))
+        adapter = ArrayAdapter(this, R.layout.style_spinner, categoryList)
 
         setUpToolbar()
         setUpSpinner()
         setUpBottomSheet()
         manageLinksEditText()
 
-        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
-        folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
-
         tv_date.text = util.getData()
 
-        if(intent.hasExtra(IntentId.EXTRA_ID)) {
+        if (intent.hasExtra(IntentId.EXTRA_ID)) {
             et_title.setText(intent.getStringExtra(IntentId.EXTRA_TITLE))
             et_body.setText(intent.getStringExtra(IntentId.EXTRA_BODY))
         }
@@ -93,7 +93,7 @@ class CreateNoteActivity : AppCompatActivity() {
         val saveItem: MenuItem? = menu?.findItem(R.id.mi_save)
         val shareItem: MenuItem? = menu?.findItem(R.id.mi_share)
 
-        if (!isValid(et_body.text.toString())) {
+        if (!isValid(et_body.text.toString()) || spinner.selectedItem == getString(R.string.choose_category)) {
             saveItem?.isEnabled = false
             shareItem?.isEnabled = false
         }
@@ -118,13 +118,12 @@ class CreateNoteActivity : AppCompatActivity() {
                 noteBody
         }
 
-        val note = Note(0, 0, noteTitle, noteBody,
-            util.getDataShort(), util.lowerCaseNotFirst(category))
-
-        val folder = Folder(util.lowerCaseNotFirst(category))
+        val note = Note(
+            0, 0, noteTitle, noteBody,
+            util.getDataShort(), util.lowerCaseNotFirst(category), false
+        )
 
         noteViewModel.insert(note)
-        folderViewModel.insert(folder)
 
         startActivity(intentDone)
         Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show()
@@ -137,7 +136,7 @@ class CreateNoteActivity : AppCompatActivity() {
         val noteBody = et_body.text.toString().trim()
         val category = spinner.selectedItem.toString().trim()
 
-        val updatedNote = Note(noteID, 0, noteTitle, noteBody, util.getDataShort() ,category)
+        val updatedNote = Note(noteID, 0, noteTitle, noteBody, util.getDataShort(), category)
 
         noteViewModel.update(updatedNote)
 
@@ -155,16 +154,16 @@ class CreateNoteActivity : AppCompatActivity() {
 
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        intent.putExtra(Intent.EXTRA_TEXT,"${getString(R.string.all)}\n\n$note")
-        intent.type="text/plain, image/jpeg, image/png"
-        startActivity(Intent.createChooser(intent,"Share To:"))
+        intent.putExtra(Intent.EXTRA_TEXT, "${getString(R.string.all)}\n\n$note")
+        intent.type = "text/plain, image/jpeg, image/png"
+        startActivity(Intent.createChooser(intent, "Share To:"))
     }
 
     private fun isValid(noteBody: String): Boolean {
         return (!(TextUtils.isEmpty(noteBody)))
     }
 
-    private fun setUpToolbar () {
+    private fun setUpToolbar() {
         myToolbar2.title = ""
         setSupportActionBar(myToolbar2)
 
@@ -175,36 +174,39 @@ class CreateNoteActivity : AppCompatActivity() {
 
     private fun setUpSpinner() {
 
-        val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        val folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
-
-        val categoryList = arrayListOf<String>()
-
-        val arrayAdapter = ArrayAdapter<String>(this, R.layout.style_spinner, categoryList)
-
-        folderViewModel.getAllCategories().observe(this, Observer {categories ->
-            arrayAdapter.addAll(categories)
+        folderViewModel.getAllCategories().observe(this, Observer { categories ->
+            adapter.addAll(categories)
         })
 
-        spinner.adapter = arrayAdapter
+        spinner.adapter = adapter
 
-        if(intent.hasExtra(IntentId.EXTRA_ID)) {
-            spinner.setSelection(arrayAdapter.getPosition(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                invalidateOptionsMenu()
+
+                val selectedItem = parent?.getChildAt(0) as TextView
+                selectedItem.setTextColor(resources.getColor(R.color.text_color_secondary))
+            }
+        }
+
+        if (intent.hasExtra(IntentId.EXTRA_ID)) {
+            spinner.setSelection(adapter.getPosition(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
         }
     }
 
-    private fun setUpBottomSheet () {
+    private fun setUpBottomSheet() {
+
         BottomSheetBehavior.from(new_note_bottomsheet).apply {
             linearLayoutImage.setOnClickListener {
 
                 if (this.state == BottomSheetBehavior.STATE_COLLAPSED) {
                     this.state = BottomSheetBehavior.STATE_EXPANDED
-                }
-                else {
+                } else {
                     this.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             }
-
             val bottomSheetBehaviorCallback =
 
                 object : BottomSheetBehavior.BottomSheetCallback() {
@@ -238,10 +240,6 @@ class CreateNoteActivity : AppCompatActivity() {
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
-        /*if (currentFocus != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-        }*/
 
         return super.dispatchTouchEvent(event)
     }
@@ -257,44 +255,29 @@ class CreateNoteActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 invalidateOptionsMenu()
             }
+
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 invalidateOptionsMenu()
             }
+
             override fun afterTextChanged(s: Editable) {
                 Linkify.addLinks(s, Linkify.WEB_URLS)
             }
         })
     }
 
-
-    private fun showDialog() {
-
-        val category = et_category.text.toString()
-
-        val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        val folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
-
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.add_category_dialog)
-
-        val yesBtn = dialog.findViewById<Button>(R.id.btn_confirm)
-        val noBtn = dialog.findViewById<Button>(R.id.button_cancel)
-
-        yesBtn.setOnClickListener {
-
-            if (TextUtils.isEmpty(et_category.text.toString()))
-                Toast.makeText(this, "Campo vuoto", Toast.LENGTH_SHORT).show()
-            else {
-                //folderViewModel.insert(Folder(et_category.text.toString()))
-                Toast.makeText(this, category, Toast.LENGTH_SHORT).show()
-                dialog.dismiss() }
+    override fun onDialogPositiveClick(dialog: Dialog, category: String) {
+        if (TextUtils.isEmpty(category))
+            Toast.makeText(this, getString(R.string.empty_category), Toast.LENGTH_SHORT).show()
+        else {
+            adapter.clear()
+            folderViewModel.insert(Folder(util.lowerCaseNotFirst(category)))
+            Toast.makeText(this, category + getString(R.string.category_added), Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
         }
-        noBtn.setOnClickListener {
-            dialog.dismiss() }
+    }
 
-        dialog.show()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+    override fun onDialogNegativeClick(dialog: Dialog) {
+        dialog.dismiss()
     }
 }

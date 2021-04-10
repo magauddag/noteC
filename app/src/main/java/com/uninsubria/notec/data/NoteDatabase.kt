@@ -2,17 +2,24 @@ package com.uninsubria.notec.data
 
 import android.content.Context
 import android.os.AsyncTask
+import android.provider.ContactsContract
+import android.provider.Settings.Global.getString
 import android.view.View
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.uninsubria.notec.R
+import com.uninsubria.notec.R.string.*
+import kotlinx.coroutines.withContext
 import java.security.AccessControlContext
+import java.util.concurrent.Executors
+import kotlin.coroutines.coroutineContext
 
 // TODO: ExportSchema = False??
 
-@Database (entities = [Note::class, Folder::class], version = 3)
+@Database (entities = [Note::class, Folder::class], version = 5)
 abstract class NoteDatabase: RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
@@ -25,6 +32,7 @@ abstract class NoteDatabase: RoomDatabase() {
         private var INSTANCE: NoteDatabase? = null
 
         fun getDatabase (context: Context): NoteDatabase {
+
             val tempInstance = INSTANCE
 
             if (tempInstance != null)
@@ -37,7 +45,7 @@ abstract class NoteDatabase: RoomDatabase() {
                     "note_database"
                 )
                     .fallbackToDestructiveMigration()
-                    //.addCallback(roomCallback)
+                    .addCallback(roomCallback)
                     .build()
 
                 INSTANCE = instance
@@ -45,28 +53,49 @@ abstract class NoteDatabase: RoomDatabase() {
             }
         }
 
-        /*val roomCallback =
+        private val roomCallback =
 
             object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
-                    PopulateDbAsyncTask(INSTANCE!!).execute()
-                }
+                    Executors.newSingleThreadExecutor().execute {
+                        INSTANCE?.let {
+                            for (i in DataGenerator.getNotes()) {
+                                it.noteDao().insert(i)
+                            }
+                            for (i in DataGenerator.getFolders()) {
+                                it.folderDao().insert(i)
+                            }
+                        }
 
-            }*/
+                    }
+                }
+            }
+
     }
 
+    class DataGenerator {
 
-    /*private class PopulateDbAsyncTask(db : NoteDatabase): AsyncTask<Void, Void, Void>() {
-        val noteDao = db.noteDao()
+        companion object {
 
+            fun getNotes(): List<Note>{
+                return listOf(
+                    Note(1, 0, "Prima nota!", "Scrivi qui", "oggi", "Libri", false),
+                    Note(2, 0, "CheckList!", "Scrivi qui", "domani", "Spesa", false),
+                    Note(3, R.drawable.example_image, "Immagini!", "Scrivi qui", "ieri", "Fiori", false)
 
-        override fun doInBackground(vararg params: Void?): Void? {
-            noteDao.insert(Note(0, "Titolo 1", "Corpo 1", "Oggi", "Link" ))
-            noteDao.insert(Note(1, "Titolo 2", "Corpo 2", "Ieri", "Foto" ))
-            noteDao.insert(Note(2, "Titolo 3", "Corpo 3", "Domani", "YT" ))
-            return null
+                )
+            }
+
+            fun getFolders(): List<Folder> {
+                return listOf(
+                    Folder("Preferiti"),
+                    Folder("Private"),
+                    Folder("Foto")
+                )
+            }
         }
 
-    }*/
+    }
 }
+

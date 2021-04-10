@@ -7,7 +7,7 @@ import androidx.room.*
 interface FolderDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(folder: Folder)
+    fun insert(folder: Folder)
 
     @Delete
     suspend fun delete(folder: Folder)

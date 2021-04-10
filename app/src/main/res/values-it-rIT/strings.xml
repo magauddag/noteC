@@ -20,4 +20,11 @@
     <string name="cancel">Annulla</string>
     <string name="add_a_new_category">Aggiungi nuova categoria</string>
     <string name="update_message">Nota modificata!</string>
+    <string name="category_added">" aggiunta!"</string>
+    <string name="empty_category">Aggiungi una categoria</string>
+    <string name="choose_category">Scegli una categoria..</string>
+    <string name="title_note1">La tua prima nota!</string>
+    <string name="title_note2">Checklist!</string>
+    <string name="title_note3">Immagini!</string>
+    <string name="search_note">Ricerca note</string>
 </resources>
