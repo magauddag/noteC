@@ -1,6 +1,10 @@
 package com.uninsubria.notec.util
 
 import android.annotation.SuppressLint
+import android.app.Application
+import android.content.res.ColorStateList
+import androidx.core.content.ContextCompat
+import com.uninsubria.notec.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -10,17 +14,20 @@ class Util {
     fun getData (): String {
         val currentDate = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("d MMM, kk:mm")
-        val formatted = currentDate.format(formatter)
-
-        return formatted
+        return currentDate.format(formatter)
     }
 
     fun getDataShort (): String {
         val currentDate = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("d MMM")
-        val formatted = currentDate.format(formatter)
+        return currentDate.format(formatter)
+    }
 
-        return formatted
+    fun getDataForPath (): String {
+        val currentDate = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM")
+        return currentDate.format(formatter)
+
     }
 
     fun lowerCaseNotFirst(str: String): String {

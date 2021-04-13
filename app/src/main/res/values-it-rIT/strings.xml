@@ -27,4 +27,10 @@
     <string name="title_note2">Checklist!</string>
     <string name="title_note3">Immagini!</string>
     <string name="search_note">Ricerca note</string>
+    <string name="delete">Elimina</string>
+    <string name="select_all">Seleziona tutte</string>
+    <string name="date_last">Data (più recenti su)</string>
+    <string name="date_first">Data (più vecchie su)</string>
+    <string name="title">Titolo</string>
+    <string name="order_notes_by">Ordina note per</string>
 </resources>

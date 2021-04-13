@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.uninsubria.notec.R
 import com.uninsubria.notec.R.string.*
+import com.uninsubria.notec.util.Util
 import kotlinx.coroutines.withContext
 import java.security.AccessControlContext
 import java.util.concurrent.Executors
@@ -79,19 +80,22 @@ abstract class NoteDatabase: RoomDatabase() {
         companion object {
 
             fun getNotes(): List<Note>{
+
+                val util = Util()
+
                 return listOf(
-                    Note(1, 0, "Prima nota!", "Scrivi qui", "oggi", "Libri", false),
-                    Note(2, 0, "CheckList!", "Scrivi qui", "domani", "Spesa", false),
-                    Note(3, R.drawable.example_image, "Immagini!", "Scrivi qui", "ieri", "Fiori", false)
+                    Note(1, 0, "Prima nota!", "Scrivi qui", util.getDataShort(), "Libri", false),
+                    Note(2, 0, "CheckList!", "Scrivi qui", util.getDataShort(), "Spesa", false),
+                    Note(3, 0, "Immagini!", "Scrivi qui", util.getDataShort(), "Fiori", false)
 
                 )
             }
 
             fun getFolders(): List<Folder> {
                 return listOf(
-                    Folder("Preferiti"),
-                    Folder("Private"),
-                    Folder("Foto")
+                    Folder("Libri"),
+                    Folder("Spesa"),
+                    Folder("Fiori")
                 )
             }
         }

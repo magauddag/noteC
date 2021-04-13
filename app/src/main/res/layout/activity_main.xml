@@ -10,7 +10,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
             android:layout_width="0dp"
-            android:layout_height="?actionBarSize"
+            android:layout_height="wrap_content"
             app:elevation="0dp"
             android:id="@+id/appBarLayout"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,6 +65,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
     </androidx.viewpager.widget.ViewPager>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_button"
             android:layout_width="wrap_content"
@@ -77,6 +78,24 @@
             android:layout_gravity="end|bottom"
             app:srcCompat="@drawable/ic_new_note"
             android:backgroundTint="@color/colorAccent"
+            android:tint="@color/textColor"
+            app:borderWidth="0dp">
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_button_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="100dp"
+            android:layout_marginBottom="27dp"
+            app:fabSize="mini"
+            android:layout_gravity="end|bottom"
+            app:srcCompat="@drawable/ic_order"
+            app:layout_anchor="@id/fab_button"
+            app:layout_anchorGravity="bottom|end"
+            android:backgroundTint="@color/colorSurfaceLight"
             android:tint="@color/textColor"
             app:borderWidth="0dp">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>

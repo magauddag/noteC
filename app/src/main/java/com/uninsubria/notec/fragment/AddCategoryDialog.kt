@@ -8,12 +8,11 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import com.uninsubria.notec.R
-import com.uninsubria.notec.util.Util
 import kotlinx.android.synthetic.main.add_category_dialog.*
 
-class CustomDialog(context : Context): Dialog(context) {
+class AddCategoryDialog(context : Context): Dialog(context) {
 
-    private val listener : CustomDialog.NoticeDialogListener = context as NoticeDialogListener
+    private val listener : AddCategoryDialog.NoticeDialogListener = context as NoticeDialogListener
 
     init {
         setCancelable(true)

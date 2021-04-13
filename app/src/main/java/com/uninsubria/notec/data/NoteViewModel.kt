@@ -47,6 +47,10 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         return repository.searchDatabase(filterQuery)
     }
 
+    fun getFilteredNotes (filterQuery: String) : LiveData<List<Note>> {
+        return repository.getFilteredNotes(filterQuery)
+    }
+
     fun getAllNotes(): LiveData<List<Note>> {
         return readAllData
     }

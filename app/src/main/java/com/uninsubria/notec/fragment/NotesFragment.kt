@@ -2,10 +2,9 @@ package com.uninsubria.notec.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -14,13 +13,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.card.MaterialCardView
 import com.uninsubria.notec.CreateNoteActivity
 import com.uninsubria.notec.R
 import com.uninsubria.notec.adapter.NoteAdapter
+import com.uninsubria.notec.adapter.NoteAdapter.Companion.selectedCount
 import com.uninsubria.notec.data.FolderViewModel
 import com.uninsubria.notec.data.Note
 import com.uninsubria.notec.data.NoteViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.card_note.*
+import kotlinx.android.synthetic.main.card_note_no_image_material.*
 import kotlinx.android.synthetic.main.fragment_notes.*
 
 class NotesFragment : Fragment() {
@@ -28,6 +31,7 @@ class NotesFragment : Fragment() {
     private lateinit var noteAdapter: NoteAdapter
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +42,6 @@ class NotesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         noteAdapter = NoteAdapter()
 
         recyclerViewNotes.adapter = noteAdapter
@@ -51,8 +54,13 @@ class NotesFragment : Fragment() {
             noteAdapter.setData(notes)
         })
 
-        noteAdapter.onItemClick = {
+        noteAdapter.onItemSelected = {
+            //Toast.makeText(this.context, "${NoteAdapter.getCount()}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this.context, "Nota ${it.title}", Toast.LENGTH_SHORT).show()
+            activity?.invalidateOptionsMenu()
+        }
 
+        noteAdapter.onItemClick = {
             val intent = Intent(this.context, CreateNoteActivity::class.java)
 
             intent.putExtra(CreateNoteActivity.IntentId.EXTRA_ID, it.id)
@@ -63,10 +71,8 @@ class NotesFragment : Fragment() {
         }
 
         noteAdapter.onItemLongClick = {
-
-            Toast.makeText(this.context, "LONG TEST", Toast.LENGTH_SHORT).show()
+            activity?.invalidateOptionsMenu()
         }
-
     }
 
     companion object {

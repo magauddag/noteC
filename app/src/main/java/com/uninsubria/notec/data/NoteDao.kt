@@ -26,4 +26,7 @@ interface NoteDao {
     @Query("SELECT * FROM note_table WHERE title LIKE :filterQuery OR body LIKE :filterQuery OR category LIKE :filterQuery")
     fun searchDatabase(filterQuery: String) : LiveData<List<Note>>
 
+    @Query("SELECT * FROM note_table WHERE category = :filterQuery")
+    fun getFilteredNotes(filterQuery: String) : LiveData<List<Note>>
+
 }

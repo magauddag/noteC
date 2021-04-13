@@ -27,4 +27,5 @@ class ViewPager(supportFragmentManager: FragmentManager):
         mFragmentList.add(fragment)
         mFragmentTitle.add(title)
     }
+
 }

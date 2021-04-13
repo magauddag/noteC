@@ -22,6 +22,10 @@ class NoteRepository(private val noteDao: NoteDao) {
         return noteDao.searchDatabase(filterQuery)
     }
 
+    fun getFilteredNotes(filterQuery : String): LiveData<List<Note>> {
+        return noteDao.getFilteredNotes(filterQuery)
+    }
+
     suspend fun deleteAllNotes() {
         noteDao.deleteAllNotes()
     }
