@@ -1,4 +1,4 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,26 +1,21 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database
 
 import android.content.Context
-import android.os.AsyncTask
-import android.provider.ContactsContract
-import android.provider.Settings.Global.getString
-import android.view.View
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.uninsubria.notec.R
-import com.uninsubria.notec.R.string.*
+import androidx.room.TypeConverters
+import com.uninsubria.notec.database.Dao.FolderDao
+import com.uninsubria.notec.database.Dao.NoteDao
+import com.uninsubria.notec.database.model.Folder
+import com.uninsubria.notec.database.model.Note
 import com.uninsubria.notec.util.Util
-import kotlinx.coroutines.withContext
-import java.security.AccessControlContext
-import java.util.concurrent.Executors
-import kotlin.coroutines.coroutineContext
 
 // TODO: ExportSchema = False??
 
-@Database (entities = [Note::class, Folder::class], version = 5)
+@Database (entities = [Note::class, Folder::class], version = 6)
+
+@TypeConverters(Converters::class)
 abstract class NoteDatabase: RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
@@ -46,7 +41,7 @@ abstract class NoteDatabase: RoomDatabase() {
                     "note_database"
                 )
                     .fallbackToDestructiveMigration()
-                    .addCallback(roomCallback)
+                    //.addCallback(roomCallback)
                     .build()
 
                 INSTANCE = instance
@@ -54,7 +49,7 @@ abstract class NoteDatabase: RoomDatabase() {
             }
         }
 
-        private val roomCallback =
+        /*private val roomCallback =
 
             object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
@@ -72,7 +67,7 @@ abstract class NoteDatabase: RoomDatabase() {
                     }
                 }
             }
-
+*/
     }
 
     class DataGenerator {
@@ -84,9 +79,33 @@ abstract class NoteDatabase: RoomDatabase() {
                 val util = Util()
 
                 return listOf(
-                    Note(1, 0, "Prima nota!", "Scrivi qui", util.getDataShort(), "Libri", false),
-                    Note(2, 0, "CheckList!", "Scrivi qui", util.getDataShort(), "Spesa", false),
-                    Note(3, 0, "Immagini!", "Scrivi qui", util.getDataShort(), "Fiori", false)
+                    Note(
+                        1,
+                        0,
+                        "Prima nota!",
+                        "Scrivi qui",
+                        util.getDataShort(),
+                        "Libri",
+                        false
+                    ),
+                    Note(
+                        2,
+                        0,
+                        "CheckList!",
+                        "Scrivi qui",
+                        util.getDataShort(),
+                        "Spesa",
+                        false
+                    ),
+                    Note(
+                        3,
+                        0,
+                        "Immagini!",
+                        "Scrivi qui",
+                        util.getDataShort(),
+                        "Fiori",
+                        false
+                    )
 
                 )
             }

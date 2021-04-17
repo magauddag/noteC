@@ -1,4 +1,4 @@
-package com.uninsubria.notec
+package com.uninsubria.notec.activities
 
 import android.content.Context
 import android.content.Intent
@@ -15,8 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.uninsubria.notec.R
 import com.uninsubria.notec.adapter.NoteAdapter
-import com.uninsubria.notec.data.NoteViewModel
+import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_searchable.*
 
 
@@ -48,7 +49,7 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
             startActivity(intent)
         }
 
-        adapter.onItemLongClick = {
+        adapter.onItemLongClick = { _,_ ,_->
 
             Toast.makeText(this, "LONG TEST", Toast.LENGTH_SHORT).show()
         }
@@ -92,7 +93,7 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         searchableRecyclerView.adapter = adapter
         searchableRecyclerView.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
 
-        noteViewModel.getAllNotes().observe(this, Observer { notes ->
+        noteViewModel.getAllNotesAsc().observe(this, Observer { notes ->
             adapter.setData(notes)
         })
     }

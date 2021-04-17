@@ -1,5 +1,6 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,12 +12,14 @@ data class Note (
 
     var image: Int,
 
+    @ColumnInfo (name = "title")
     var title: String,
 
     var body: String,
 
     var data: String,
 
+    @ColumnInfo (name = "category")
     var category: String,
 
     var selected: Boolean = false)

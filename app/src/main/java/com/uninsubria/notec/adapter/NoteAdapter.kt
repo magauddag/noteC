@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.uninsubria.notec.R
-import com.uninsubria.notec.data.Note
+import com.uninsubria.notec.database.model.Note
 import kotlinx.android.synthetic.main.card_note.view.imageView
 import kotlinx.android.synthetic.main.card_note.view.tv_body
 import kotlinx.android.synthetic.main.card_note.view.tv_category
@@ -29,6 +29,7 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setCount(num: Int) {
             selectedCount = num
         }
+
     }
 
     private val layoutImage = R.layout.card_note_material
@@ -36,8 +37,8 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var notes = emptyList<Note>()
     var onItemClick: ((Note) -> Unit)? = null
-    var onItemLongClick: ((Note) -> Unit)? = null
-    var onItemSelected: ((Note) -> Unit)? = null
+    var onItemLongClick: ((Note, Boolean, Int) -> Unit)? = null
+    var onItemSelected: ((Note, Boolean, Int) -> Unit)? = null
 
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val title: TextView = itemView.tv_title
@@ -45,7 +46,7 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val image: ImageView = itemView.imageView
         val date: TextView = itemView.tv_data
         val category: TextView = itemView.tv_category
-        val card : MaterialCardView = itemView.card_note_material_image
+        val card: MaterialCardView = itemView.card_note_material_image
 
         init {
 
@@ -53,17 +54,19 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 if (card.isChecked) {
                     card.isChecked = false
-                    onItemSelected?.invoke(notes[adapterPosition])
+                    onItemSelected?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
                 } else if (selectedCount > 0 && !card.isChecked) {
                     card.isChecked = true
-                    onItemSelected?.invoke(notes[adapterPosition])
+                    onItemSelected?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
                 } else
                     onItemClick?.invoke(notes[adapterPosition])
             }
 
             itemView.setOnLongClickListener {
-                card.isChecked = !card.isChecked
-                onItemLongClick?.invoke(notes[adapterPosition])
+                if(selectedCount == 0) {
+                    card.isChecked = !card.isChecked
+                    onItemLongClick?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
+                }
                 return@setOnLongClickListener true
             }
         }
@@ -82,17 +85,19 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                 if (card.isChecked) {
                     card.isChecked = false
-                    onItemSelected?.invoke(notes[adapterPosition])
+                    onItemSelected?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
                 } else if (selectedCount > 0 && !card.isChecked) {
                     card.isChecked = true
-                    onItemSelected?.invoke(notes[adapterPosition])
+                    onItemSelected?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
                 } else
                     onItemClick?.invoke(notes[adapterPosition])
             }
 
             itemView.setOnLongClickListener {
-                card.isChecked = !card.isChecked
-                onItemLongClick?.invoke(notes[adapterPosition])
+                if(selectedCount == 0) {
+                    card.isChecked = !card.isChecked
+                    onItemLongClick?.invoke(notes[adapterPosition], card.isChecked, adapterPosition)
+                }
                 return@setOnLongClickListener true
             }
         }
@@ -132,6 +137,7 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemHolder.category.text = currentItem.category
 
             itemHolder.card.setOnCheckedChangeListener { _, isChecked ->
+
                 currentItem.selected = isChecked
 
                 if (isChecked)
@@ -163,4 +169,5 @@ class NoteAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         this.notes = notes
         notifyDataSetChanged()
     }
+
 }

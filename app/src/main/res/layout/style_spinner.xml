@@ -3,11 +3,13 @@
           android:id="@+id/spinner_text"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:textSize="16sp"
+          android:textSize="17sp"
           android:gravity="center_vertical"
           android:textColor="@color/opaqueTextColor"
           android:background="@color/colorBackground"
           android:paddingHorizontal="15dp"
+          android:ellipsize="end"
+          android:maxLines="1"
           android:paddingVertical="9dp">
 
 </TextView>

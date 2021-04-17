@@ -1,7 +1,8 @@
-package com.uninsubria.notec
+package com.uninsubria.notec.activities
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
@@ -11,22 +12,19 @@ import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.text.util.Linkify
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.uninsubria.notec.data.Folder
-import com.uninsubria.notec.data.FolderViewModel
-import com.uninsubria.notec.data.Note
-import com.uninsubria.notec.data.NoteViewModel
+import com.uninsubria.notec.R
+import com.uninsubria.notec.database.model.Folder
+import com.uninsubria.notec.database.viewmodel.FolderViewModel
+import com.uninsubria.notec.database.model.Note
+import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import com.uninsubria.notec.fragment.AddCategoryDialog
 import com.uninsubria.notec.util.MyMovementMethod
 import com.uninsubria.notec.util.Util
@@ -52,8 +50,9 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var folderViewModel: FolderViewModel
-    private lateinit var adapter: ArrayAdapter<String>
+    private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var categoryList: ArrayList<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +61,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
         folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
-        categoryList = arrayListOf<String>(getString(R.string.choose_category))
-        adapter = ArrayAdapter(this, R.layout.style_spinner, categoryList)
+        categoryList = arrayListOf(getString(R.string.choose_category))
+        arrayAdapter = ArrayAdapter(this, R.layout.style_spinner, categoryList)
 
         setUpToolbar()
         setUpSpinner()
@@ -77,6 +76,12 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             et_title.setText(intent.getStringExtra(IntentId.EXTRA_TITLE))
             et_body.setText(intent.getStringExtra(IntentId.EXTRA_BODY))
         }
+
+        //Uncomment to make keyboard pop up on opening activity
+        if(et_body.requestFocus()) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -92,6 +97,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     updateItem()
                 else
                     insertDataToDatabase()
+                item.isEnabled = false
             }
             R.id.mi_share -> shareNote()
         }
@@ -103,7 +109,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         val saveItem: MenuItem? = menu?.findItem(R.id.mi_save)
         val shareItem: MenuItem? = menu?.findItem(R.id.mi_share)
 
-        if (!isValid(et_body.text.toString()) || spinner.selectedItem == getString(R.string.choose_category)) {
+        if (!isValid(et_body.text.toString()) && !isValid(et_title.text.toString())) {
             saveItem?.isEnabled = false
             shareItem?.isEnabled = false
         }
@@ -113,11 +119,10 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
     private fun insertDataToDatabase() {
 
-        val intentDone = Intent(this, MainActivity::class.java)
-
         var noteTitle = et_title.text.toString().trim()
-        val noteBody = et_body.text.toString().trim()
+        var noteBody = et_body.text.toString().trim()
         val category = spinner.selectedItem.toString().trim()
+        val note: Note?
 
         if (TextUtils.isEmpty(noteTitle)) {
             val i = noteBody.indexOf(' ')
@@ -127,16 +132,29 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             else
                 noteBody
         }
+        if (TextUtils.isEmpty(noteBody))
+            noteBody = noteTitle
 
-        val note = Note(
-            0, 0, noteTitle, noteBody,
-            util.getDataShort(), util.lowerCaseNotFirst(category), false
-        )
+
+        if (category == getString(R.string.choose_category)) {
+            folderViewModel.insert(Folder(getString(R.string.default_folder)))
+            Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
+            note = Note(
+                0, 0, noteTitle, noteBody,
+                util.getDataShort(), getString(R.string.default_folder), false
+            )
+        }else {
+            note =
+                Note(
+                    0, 0, noteTitle, noteBody,
+                    util.getDataShort(), util.lowerCaseNotFirst(category), false
+                )
+            Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show()
+        }
 
         noteViewModel.insert(note)
 
-        startActivity(intentDone)
-        Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show()
+        hideKeyboard()
     }
 
     private fun updateItem() {
@@ -146,13 +164,17 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         val noteBody = et_body.text.toString().trim()
         val category = spinner.selectedItem.toString().trim()
 
-        val updatedNote = Note(noteID, 0, noteTitle, noteBody, util.getDataShort(), category)
-
+        val updatedNote = Note(
+            noteID,
+            0,
+            noteTitle,
+            noteBody,
+            util.getDataShort(),
+            category
+        )
         noteViewModel.update(updatedNote)
 
-        val intentDone = Intent(this, MainActivity::class.java)
-
-        startActivity(intentDone)
+        hideKeyboard()
         Toast.makeText(this, getString(R.string.update_message), Toast.LENGTH_SHORT).show()
     }
 
@@ -169,8 +191,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         startActivity(Intent.createChooser(intent, "Share To:"))
     }
 
-    private fun isValid(noteBody: String): Boolean {
-        return (!(TextUtils.isEmpty(noteBody)))
+    private fun isValid(noteText: String): Boolean {
+        return (!(TextUtils.isEmpty(noteText)))
     }
 
     private fun setUpToolbar() {
@@ -185,10 +207,10 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     private fun setUpSpinner() {
 
         folderViewModel.getAllCategories().observe(this, Observer { categories ->
-            adapter.addAll(categories)
+            arrayAdapter.addAll(categories)
         })
 
-        spinner.adapter = adapter
+        spinner.adapter = arrayAdapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -198,11 +220,12 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
                 val selectedItem = parent?.getChildAt(0) as? TextView
                 selectedItem?.setTextColor(resources.getColor(R.color.text_color_secondary))
+                selectedItem?.textSize = 20F
             }
         }
 
         if (intent.hasExtra(IntentId.EXTRA_ID)) {
-            spinner.setSelection(adapter.getPosition(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
+            spinner.setSelection(arrayAdapter.getPosition(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
         }
     }
 
@@ -235,7 +258,9 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         linearLayout1.setOnClickListener {
 
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(takePictureIntent, IntentId.CAMERA_REQUEST)
+            startActivityForResult(takePictureIntent,
+                IntentId.CAMERA_REQUEST
+            )
         }
 
         linearLayout2.setOnClickListener {
@@ -243,7 +268,9 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             galleryIntent.type = "image/*"
 
             if (galleryIntent.resolveActivity(packageManager) != null) {
-                startActivityForResult(galleryIntent, IntentId.GALLERY_REQUEST)
+                startActivityForResult(galleryIntent,
+                    IntentId.GALLERY_REQUEST
+                )
             }
         }
 
@@ -287,7 +314,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     mBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
         }
-
         return super.dispatchTouchEvent(event)
     }
 
@@ -311,14 +337,32 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                 Linkify.addLinks(s, Linkify.WEB_URLS)
             }
         })
+
+        et_title.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                invalidateOptionsMenu()
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                invalidateOptionsMenu()
+            }
+
+            override fun afterTextChanged(s: Editable) { }
+        })
     }
 
     override fun onDialogPositiveClick(dialog: Dialog, category: String) {
         if (TextUtils.isEmpty(category))
             Toast.makeText(this, getString(R.string.empty_category), Toast.LENGTH_SHORT).show()
         else {
-            adapter.clear()
-            folderViewModel.insert(Folder(util.lowerCaseNotFirst(category)))
+            arrayAdapter.clear()
+            folderViewModel.insert(
+                Folder(
+                    util.lowerCaseNotFirst(
+                        category
+                    )
+                )
+            )
             Toast.makeText(this, category + getString(R.string.category_added), Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
@@ -328,11 +372,14 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         dialog.dismiss()
     }
 
+    private fun Activity.hideKeyboard() {
+        hideKeyboard(currentFocus ?: View(this))
+    }
 
-
-
-
-
+    private fun Context.hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    }
 
 
 

@@ -10,10 +10,10 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.uninsubria.notec.FilteredNotesActivity
+import com.uninsubria.notec.activities.FilteredNotesActivity
 import com.uninsubria.notec.R
 import com.uninsubria.notec.adapter.FolderAdapter
-import com.uninsubria.notec.data.FolderViewModel
+import com.uninsubria.notec.database.viewmodel.FolderViewModel
 import kotlinx.android.synthetic.main.fragment_folders.*
 
 class FoldersFragment : Fragment() {

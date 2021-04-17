@@ -1,6 +1,8 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.repository
 
 import androidx.lifecycle.LiveData
+import com.uninsubria.notec.database.Dao.FolderDao
+import com.uninsubria.notec.database.model.Folder
 
 class FolderRepository(private val folderDao: FolderDao) {
 

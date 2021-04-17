@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.uninsubria.notec.R
-import com.uninsubria.notec.data.Folder
+import com.uninsubria.notec.database.model.Folder
 import kotlinx.android.synthetic.main.card_folder.view.*
 
 class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {

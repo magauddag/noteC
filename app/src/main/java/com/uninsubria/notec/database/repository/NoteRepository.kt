@@ -1,10 +1,15 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.repository
 
 import androidx.lifecycle.LiveData
+import com.uninsubria.notec.database.Dao.NoteDao
+import com.uninsubria.notec.database.model.Note
 
 class NoteRepository(private val noteDao: NoteDao) {
 
     val readAllData: LiveData<List<Note>> = noteDao.getAllNotes()
+    val readAllDataDesc: LiveData<List<Note>> = noteDao.getAllNotesDesc()
+    val readAllDataByCategory: LiveData<List<Note>> = noteDao.getAllNotesByCategory()
+    val readAllDataByTitle: LiveData<List<Note>> = noteDao.getAllNotesByTitle()
 
     suspend fun insert(note: Note) {
         noteDao.insert(note)
@@ -18,6 +23,10 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.delete(note)
     }
 
+    suspend fun deleteAllNotes() {
+        noteDao.deleteAllNotes()
+    }
+
     fun searchDatabase(filterQuery : String) : LiveData<List<Note>> {
         return noteDao.searchDatabase(filterQuery)
     }
@@ -26,7 +35,6 @@ class NoteRepository(private val noteDao: NoteDao) {
         return noteDao.getFilteredNotes(filterQuery)
     }
 
-    suspend fun deleteAllNotes() {
-        noteDao.deleteAllNotes()
-    }
+    //fun getAllNotes() = noteDao.getAllNotes()
+
 }

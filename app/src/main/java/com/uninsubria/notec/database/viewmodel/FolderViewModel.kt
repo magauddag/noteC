@@ -1,9 +1,12 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.uninsubria.notec.database.NoteDatabase
+import com.uninsubria.notec.database.model.Folder
+import com.uninsubria.notec.database.repository.FolderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -14,7 +17,8 @@ class FolderViewModel(application: Application): AndroidViewModel(application) {
     private val repository: FolderRepository
 
     init {
-        val folderDao = NoteDatabase.getDatabase(application).folderDao()
+        val folderDao = NoteDatabase.getDatabase(application)
+            .folderDao()
         repository = FolderRepository(folderDao)
         readAllFolder = repository.readAllData
         readAllCategories = repository.readAllCategories

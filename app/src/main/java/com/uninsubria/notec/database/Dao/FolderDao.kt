@@ -1,7 +1,8 @@
-package com.uninsubria.notec.data
+package com.uninsubria.notec.database.Dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.uninsubria.notec.database.model.Folder
 
 @Dao
 interface FolderDao {

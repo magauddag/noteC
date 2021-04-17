@@ -1,4 +1,4 @@
-package com.uninsubria.notec
+package com.uninsubria.notec.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,9 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.uninsubria.notec.R
 import com.uninsubria.notec.adapter.NoteAdapter
-import com.uninsubria.notec.data.NoteViewModel
-import kotlinx.android.synthetic.main.activity_create_note.*
+import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_filtered_notes.*
 
 class FilteredNotesActivity : AppCompatActivity() {
@@ -45,7 +45,7 @@ class FilteredNotesActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        noteAdapter.onItemLongClick = {
+        noteAdapter.onItemLongClick = {_, _, _ ->
             Toast.makeText(this, "LONG TEST", Toast.LENGTH_SHORT).show()
         }
 

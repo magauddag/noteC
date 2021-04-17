@@ -7,16 +7,16 @@
           android:visible="true"
           android:icon="@drawable/ic_search"
           android:orderInCategory="1"
-          app:iconTint="@color/opaqueTextColor"
+          app:iconTint="@color/text_color_secondary"
           app:showAsAction="ifRoom|collapseActionView"/>
 
     <item
             android:id="@+id/mi_settings"
-            android:icon="@drawable/ic_settings"
+            android:icon="@drawable/ic_settings_filled"
             android:title="@string/settings"
             android:visible="true"
             android:orderInCategory="2"
-            app:iconTint="@color/opaqueTextColor"
+            app:iconTint="@color/text_color_secondary"
             app:showAsAction="ifRoom"/>
 
     <item
