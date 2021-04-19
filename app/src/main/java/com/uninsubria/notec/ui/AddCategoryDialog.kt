@@ -1,4 +1,4 @@
-package com.uninsubria.notec.fragment
+package com.uninsubria.notec.ui
 
 import android.app.Dialog
 import android.content.Context
@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.add_category_dialog.*
 
 class AddCategoryDialog(context : Context): Dialog(context) {
 
-    private val listener : AddCategoryDialog.NoticeDialogListener = context as NoticeDialogListener
+    private val listener : NoticeDialogListener = context as NoticeDialogListener
 
     init {
         setCancelable(true)

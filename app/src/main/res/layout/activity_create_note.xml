@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorBackground"
                 android:paddingTop="18dp"
-                android:textSize="30sp"
+                android:textSize="32sp"
                 android:hint="@string/note_title"
                 android:maxLength="16"
                 android:inputType="textCapSentences"
@@ -55,34 +55,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorBackground"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="9dp"
                 android:textSize="15sp"
                 android:layout_below="@id/et_title"
                 android:textColor="@color/opaqueTextColor">
         </TextView>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_below="@id/tv_date"
+                android:gravity="center_vertical"
                 android:layout_marginTop="12dp"
                 android:orientation="horizontal">
 
-            <View android:layout_width="5dp"
-                  android:layout_height="25dp"
-                  android:layout_gravity="center_vertical"
-                  android:paddingVertical="10dp"
-                  android:background="@drawable/category_view">
+            <View
+                    android:layout_width="5dp"
+                    android:id="@+id/view"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="26dp"
+                    android:background="@drawable/category_view"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
             </View>
 
-            <Spinner
-                    android:id="@+id/spinner"
-                    android:layout_width="match_parent"
+            <TextView
+                    android:id="@+id/textviewspinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10dp"
+                    android:textSize="20sp"
+                    android:background="@color/colorBackground"
+                    android:text="@string/choose_category"
+                    android:textColor="@color/text_color_secondary"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/view"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_open_menu">
+            </TextView>
+
+            <ImageView
+                    android:id="@+id/iv_open_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_height="wrap_content">
-            </Spinner>
-        </LinearLayout>
+                    android:src="@drawable/ic_arrow_down"
+                    app:tint="@color/allTabColor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+            </ImageView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
                 android:id="@+id/imageLinearLayout"
@@ -127,7 +154,7 @@
                 android:background="@color/colorBackground"
                 android:inputType="textCapSentences|textMultiLine"
                 android:singleLine="false"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginBottom="50dp"
                 android:textSize="17sp"
                 android:textColorLink="@color/opaqueTextColor"

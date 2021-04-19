@@ -1,6 +1,7 @@
 package com.uninsubria.notec.fragment
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,6 +23,7 @@ import com.uninsubria.notec.adapter.NoteAdapter
 import com.uninsubria.notec.database.model.Note
 import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import com.uninsubria.notec.util.SortType
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_notes.*
 
 class NotesFragment : Fragment() {
@@ -61,8 +64,17 @@ class NotesFragment : Fragment() {
             startActivity(intent)
         }
 
+        val selectedNotesNumberText = activity?.findViewById<TextView>(R.id.tv_selected)
+
         noteAdapter.onItemSelected = {note, noteSelected, position ->
             activity?.invalidateOptionsMenu()
+
+            if(NoteAdapter.getCount() == 1)
+                selectedNotesNumberText?.text = NoteAdapter.getCount().toString() +
+                        getString(R.string.single_item_selected)
+            else
+                selectedNotesNumberText?.text = NoteAdapter.getCount().toString() +
+                        getString(R.string.multiple_items_selected)
 
             if(noteSelected)
                 toBeDeleted[position] = note
@@ -73,6 +85,13 @@ class NotesFragment : Fragment() {
 
         noteAdapter.onItemLongClick = { note, noteSelected, position ->
             activity?.invalidateOptionsMenu()
+
+            if(NoteAdapter.getCount() == 1)
+                selectedNotesNumberText?.text = NoteAdapter.getCount().toString() +
+                        getString(R.string.single_item_selected)
+            else
+                selectedNotesNumberText?.text = NoteAdapter.getCount().toString() +
+                        getString(R.string.multiple_items_selected)
 
             if(noteSelected)
                 toBeDeleted[position] = note
@@ -177,6 +196,7 @@ class NotesFragment : Fragment() {
             noteAdapter.setData(notes)
         })
     }
+
 
     companion object {
 

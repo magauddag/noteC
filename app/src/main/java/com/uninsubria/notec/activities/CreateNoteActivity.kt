@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
@@ -16,7 +17,6 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -25,12 +25,12 @@ import com.uninsubria.notec.database.model.Folder
 import com.uninsubria.notec.database.viewmodel.FolderViewModel
 import com.uninsubria.notec.database.model.Note
 import com.uninsubria.notec.database.viewmodel.NoteViewModel
-import com.uninsubria.notec.fragment.AddCategoryDialog
+import com.uninsubria.notec.ui.AddCategoryDialog
 import com.uninsubria.notec.util.MyMovementMethod
 import com.uninsubria.notec.util.Util
 import kotlinx.android.synthetic.main.activity_create_note.*
 import kotlinx.android.synthetic.main.new_note_bottomsheet.*
-import java.util.*
+import kotlin.collections.ArrayList
 
 
 class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener {
@@ -46,6 +46,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     }
 
     private val util = Util()
+    private val listPopupWindow by lazy { ListPopupWindow(this) }
 
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
@@ -65,13 +66,17 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         arrayAdapter = ArrayAdapter(this, R.layout.style_spinner, categoryList)
 
         setUpToolbar()
-        setUpSpinner()
+        //setUpSpinner()
+        setUpListpopup()
         setUpBottomSheet()
         manageLinksEditText()
 
         tv_date.text = util.getData()
+
+        //make rounded border for inserted images
         addedImage.clipToOutline = true
 
+        //activity opened after clicking on existing note
         if (intent.hasExtra(IntentId.EXTRA_ID)) {
             et_title.setText(intent.getStringExtra(IntentId.EXTRA_TITLE))
             et_body.setText(intent.getStringExtra(IntentId.EXTRA_BODY))
@@ -81,7 +86,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         if(et_body.requestFocus()) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -97,7 +101,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     updateItem()
                 else
                     insertDataToDatabase()
-                item.isEnabled = false
             }
             R.id.mi_share -> shareNote()
         }
@@ -119,9 +122,12 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
     private fun insertDataToDatabase() {
 
+        hideKeyboard()
+
         var noteTitle = et_title.text.toString().trim()
         var noteBody = et_body.text.toString().trim()
-        val category = spinner.selectedItem.toString().trim()
+        //val category = spinner.selectedItem.toString().trim()
+        val category = textviewspinner.text.toString().trim()
         val note: Note?
 
         if (TextUtils.isEmpty(noteTitle)) {
@@ -154,28 +160,41 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
         noteViewModel.insert(note)
 
-        hideKeyboard()
+        SystemClock.sleep(500)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     private fun updateItem() {
 
+        hideKeyboard()
+
         val noteID = intent.getIntExtra(IntentId.EXTRA_ID, 0)
         val noteTitle = et_title.text.toString().trim()
         val noteBody = et_body.text.toString().trim()
-        val category = spinner.selectedItem.toString().trim()
+        //val category = spinner.selectedItem.toString().trim()
+        val category = textviewspinner.text.toString().trim()
 
-        val updatedNote = Note(
-            noteID,
-            0,
-            noteTitle,
-            noteBody,
-            util.getDataShort(),
-            category
-        )
-        noteViewModel.update(updatedNote)
+        val note: Note?
 
-        hideKeyboard()
-        Toast.makeText(this, getString(R.string.update_message), Toast.LENGTH_SHORT).show()
+        if (category == getString(R.string.choose_category)) {
+            note = Note(
+                noteID, 0, noteTitle, noteBody,
+                util.getDataShort(), getString(R.string.default_folder), false
+            )
+            Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
+        }else {
+            note =
+                Note(
+                    noteID, 0, noteTitle, noteBody,
+                    util.getDataShort(), category, false
+                )
+            Toast.makeText(this, getString(R.string.update_message), Toast.LENGTH_SHORT).show()
+        }
+
+        noteViewModel.update(note)
+
+        SystemClock.sleep(500)
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     private fun shareNote() {
@@ -204,13 +223,36 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         }
     }
 
+    private fun setUpListpopup() {
+        folderViewModel.getAllCategories().observe(this, Observer { categories ->
+            categoryList.addAll(categories)
+        })
+
+        listPopupWindow.setAdapter(arrayAdapter)
+
+        listPopupWindow.setOnItemClickListener { _, _, position, _ ->
+            textviewspinner.text = categoryList[position]
+            listPopupWindow.dismiss()
+        }
+
+        listPopupWindow.anchorView = textviewspinner
+
+        textviewspinner.setOnClickListener { listPopupWindow.show() }
+        iv_open_menu.setOnClickListener { listPopupWindow.show() }
+
+        if (intent.hasExtra(IntentId.EXTRA_ID)) {
+            textviewspinner.text = intent.getStringExtra(IntentId.EXTRA_CATEGORY)
+        }
+    }
+
     private fun setUpSpinner() {
 
         folderViewModel.getAllCategories().observe(this, Observer { categories ->
             arrayAdapter.addAll(categories)
+            categoryList.addAll(categories)
         })
 
-        spinner.adapter = arrayAdapter
+        /*spinner.adapter = arrayAdapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -225,8 +267,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         }
 
         if (intent.hasExtra(IntentId.EXTRA_ID)) {
-            spinner.setSelection(arrayAdapter.getPosition(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
-        }
+            spinner.setSelection(categoryList.indexOf(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
+        }*/
     }
 
     private fun setUpBottomSheet() {
@@ -363,7 +405,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     )
                 )
             )
-            Toast.makeText(this, category + getString(R.string.category_added), Toast.LENGTH_SHORT).show()
+            textviewspinner.text = util.lowerCaseNotFirst(category).trim()
+            Toast.makeText(this, util.lowerCaseNotFirst(category) + getString(R.string.category_added), Toast.LENGTH_SHORT).show()
             dialog.dismiss()
         }
     }

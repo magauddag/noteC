@@ -49,10 +49,10 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
             startActivity(intent)
         }
 
-        adapter.onItemLongClick = { _,_ ,_->
+        /*adapter.onItemLongClick = { _,_ ,_->
 
             Toast.makeText(this, "LONG TEST", Toast.LENGTH_SHORT).show()
-        }
+        }*/
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -136,5 +136,8 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         return super.dispatchTouchEvent(event)
     }
 
-
+    override fun onBackPressed() {
+        NoteAdapter.setCount(0)
+        super.onBackPressed()
+    }
 }

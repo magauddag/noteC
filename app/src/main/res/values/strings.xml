@@ -36,6 +36,8 @@
     <string name="default_folder">Default</string>
     <string name="no_category_msg">No category selected, added to default section</string>
     <string name="reminder_delete">Reminder</string>
-    <string name="selected_notes_will_be_deleted">Selected notes will be deleted</string>
+    <string name="selected_items_will_be_deleted">Selected items will be deleted</string>
+    <string name="single_item_selected">" item selected"</string>
+    <string name="multiple_items_selected">" items selected"</string>
 
 </resources>

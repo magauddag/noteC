@@ -19,10 +19,8 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
     private val readAllDataByCategory: LiveData<List<Note>>
     private val readAllDataByTitle: LiveData<List<Note>>
     private val repository: NoteRepository
-
     val notes = MediatorLiveData<List<Note>>()
     var sortType = SortType.ASC
-
 
     init {
         val noteDao = NoteDatabase.getDatabase(application).noteDao()
@@ -90,7 +88,6 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
             repository.deleteAllNotes()
         }
     }
-
 
     fun searchDatabase (filterQuery : String) = repository.searchDatabase(filterQuery)
 

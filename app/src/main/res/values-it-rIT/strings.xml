@@ -22,7 +22,7 @@
     <string name="update_message">Nota modificata!</string>
     <string name="category_added">" aggiunta!"</string>
     <string name="empty_category">Aggiungi una categoria</string>
-    <string name="choose_category">Scegli una categoria...</string>
+    <string name="choose_category">Scegli una categoria…</string>
     <string name="title_note1">La tua prima nota!</string>
     <string name="title_note2">Checklist!</string>
     <string name="title_note3">Immagini!</string>
@@ -36,5 +36,7 @@
     <string name="no_category_msg">Nessuna categoria selezionata, aggiunta nella sezione \"Default\"</string>
     <string name="default_folder">Default</string>
     <string name="reminder_delete">Promemoria</string>
-    <string name="selected_notes_will_be_deleted">Le note selezionate verranno eliminate</string>
+    <string name="selected_items_will_be_deleted">Gli elementi selezionati verranno eliminati</string>
+    <string name="single_item_selected">" elemento selezionato"</string>
+    <string name="multiple_items_selected">" elementi selezionati"</string>
 </resources>

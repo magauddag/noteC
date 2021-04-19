@@ -30,6 +30,21 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <TextView
+            android:id="@+id/tv_selected"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+            android:paddingHorizontal="18dp"
+            android:visibility="visible"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            android:textColor="@color/text_color_secondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toEndOf="parent">
+    </TextView>
+
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
@@ -41,7 +56,6 @@
             app:tabTextColor="@color/opaqueTextColor"
             android:background="@color/colorBackground"
             app:tabRippleColor="@color/colorBackground"
-            android:layout_marginTop="10dp"
             app:tabIndicatorAnimationMode="elastic"
             app:tabIndicatorFullWidth="false"
             app:tabIndicatorHeight="4dp"
@@ -50,12 +64,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+            app:layout_constraintTop_toBottomOf="@+id/tv_selected">
 
     </com.google.android.material.tabs.TabLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerHome"
+            app:layout_anchor="@id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scrollbars="horizontal"
@@ -65,7 +80,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-    </androidx.viewpager.widget.ViewPager>
+    </androidx.viewpager2.widget.ViewPager2>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_button"
@@ -94,7 +109,6 @@
             app:fabSize="mini"
             android:layout_gravity="end|bottom"
             app:srcCompat="@drawable/ic_order"
-            app:layout_anchor="@id/fab_button"
             app:layout_anchorGravity="bottom|end"
             android:backgroundTint="@color/colorSurfaceLight"
             android:tint="@color/textColor"
