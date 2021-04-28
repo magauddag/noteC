@@ -10,18 +10,19 @@
     <string name="share">Share</string>
     <string name="take_a_photo">Take a photo</string>
     <string name="choose_photo">Choose photo from gallery</string>
-    <string name="add_checklist">Add checklist</string>
+    <string name="add_bulletlist">Add list</string>
+    <string name="remove_bulletlist">Remove list</string>
     <string name="success">Successfully added!</string>
     <string name="all">All</string>
     <string name="categories">Categories</string>
-    <string name="shared">From noteC</string>
+    <string name="shared">From noteC:</string>
     <string name="add_category">Add category</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="add_a_new_category">Add a new category</string>
     <string name="update_message">Updated correctly!</string>
-    <string name="category_added">" added!"</string>
-    <string name="empty_category">Category field must not be empty</string>
+    <string name="category_added">" added"</string>
+    <string name="empty_category">Category field must not be empty nor be called Deafult</string>
     <string name="choose_category">Choose category…</string>
     <string name="title_note1">Your first note!</string>
     <string name="title_note2">Checklist!</string>
@@ -39,5 +40,15 @@
     <string name="selected_items_will_be_deleted">Selected items will be deleted</string>
     <string name="single_item_selected">" item selected"</string>
     <string name="multiple_items_selected">" items selected"</string>
+    <string name="zero_notes">"Add your first note"</string>
+    <string name="zero_categories">No categories added</string>
+    <string name="no_results_title">"No results found"</string>
+    <string name="category_empty">"Empty category"</string>
+    <string name="camera_perm">Camera permission is required to use camera</string>
+    <string name="gallery_perm">External storage permission is required to access gallery</string>
+    <string name="delete_folder_alert">Selected items will be deleted, each note in these categories will be moved
+        to the default section
+    </string>
+    <string name="default_cant_be_deleted">Default category can\'t be deleted</string>
 
 </resources>

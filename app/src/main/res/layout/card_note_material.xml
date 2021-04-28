@@ -79,7 +79,8 @@
                 android:paddingHorizontal="15dp"
                 android:textColor="@color/opaqueTextColor"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@+id/tv_data">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_data">
 
         </TextView>
         <ImageView

@@ -42,6 +42,7 @@
                 android:fontFamily="@font/futura_medium"
                 android:textSize="15sp"
                 android:text="Body"
+                android:lineSpacingExtra="2dp"
                 android:paddingTop="15dp"
                 android:paddingHorizontal="15dp"
                 android:textColor="@color/text_color_secondary"

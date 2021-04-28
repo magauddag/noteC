@@ -3,17 +3,48 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/colorBackground"
         android:paddingHorizontal="10dp"
         android:paddingTop="10dp"
         tools:context=".fragment.NotesFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+
+    <RelativeLayout
+            android:id="@+id/emptyView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:gravity="center"
+            android:orientation="vertical">
+
+        <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="100dp"
+                app:lottie_loop="true"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="astronaut_empty.json">
+
+        </com.airbnb.lottie.LottieAnimationView>
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:id="@+id/loadingView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBackground"
+            android:gravity="center"
+            android:orientation="vertical">
+    </RelativeLayout>
+
+
+    <com.uninsubria.notec.ui.RecyclerViewEmptySupport
             android:id="@+id/recyclerViewNotes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/card_note">
 
-    </androidx.recyclerview.widget.RecyclerView>
+    </com.uninsubria.notec.ui.RecyclerViewEmptySupport>
 
 </RelativeLayout>

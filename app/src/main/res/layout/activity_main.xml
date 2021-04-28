@@ -94,7 +94,7 @@
             android:layout_gravity="end|bottom"
             app:srcCompat="@drawable/ic_new_note"
             android:backgroundTint="@color/colorAccent"
-            android:tint="@color/textColor"
+            app:tint="@color/colorBackground"
             app:borderWidth="0dp">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 
@@ -111,7 +111,7 @@
             app:srcCompat="@drawable/ic_order"
             app:layout_anchorGravity="bottom|end"
             android:backgroundTint="@color/colorSurfaceLight"
-            android:tint="@color/textColor"
+            app:tint="@color/colorBackground"
             app:borderWidth="0dp">
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 </androidx.constraintlayout.widget.ConstraintLayout>

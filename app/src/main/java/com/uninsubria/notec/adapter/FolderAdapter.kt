@@ -4,15 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.compose.animation.core.animateDpAsState
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.uninsubria.notec.R
 import com.uninsubria.notec.database.model.Folder
 import kotlinx.android.synthetic.main.card_folder.view.*
 
-class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
+class FolderAdapter : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
     companion object {
         var selectedCount = 0
@@ -24,38 +22,37 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
         fun setCount(num: Int) {
             selectedCount = num
         }
-
     }
 
-    private var folders = emptyList<Folder>()
+    var folders = emptyList<Folder>()
     var onItemClick: ((Folder) -> Unit)? = null
     var onItemSelected: ((Folder, Boolean, Int) -> Unit)? = null
     var onItemLongClick: ((Folder, Boolean, Int) -> Unit)? = null
 
-    inner class FolderViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var category: TextView = itemView.tv_folder_category
         var card: MaterialCardView = itemView.folder_card
 
         init {
 
             itemView.setOnClickListener {
-                if(card.isChecked) {
-                    card.isChecked = false
-                    onItemSelected?.invoke(folders[adapterPosition], card.isChecked, adapterPosition)
-                }
-                else if(selectedCount > 0 && !card.isChecked) {
-                    card.isChecked = true
-                    onItemSelected?.invoke(folders[adapterPosition], card.isChecked, adapterPosition)
-                }else
-                    onItemClick?.invoke(folders[adapterPosition])
 
+                if (card.isChecked && category.text != "Default") {
+                    card.isChecked = false
+                    onItemSelected?.invoke(folders[bindingAdapterPosition], card.isChecked, bindingAdapterPosition)
+                } else if (selectedCount > 0 && !card.isChecked && category.text != "Default") {
+                    card.isChecked = true
+                    onItemSelected?.invoke(folders[bindingAdapterPosition], card.isChecked, bindingAdapterPosition)
+                } else if (selectedCount == 0)
+                    onItemClick?.invoke(folders[bindingAdapterPosition])
             }
 
             itemView.setOnLongClickListener {
-                if(selectedCount == 0) {
+                if (selectedCount == 0 && category.text != "Default") {
                     card.isChecked = !card.isChecked
-                    onItemLongClick?.invoke(folders[adapterPosition], card.isChecked, adapterPosition)
+                    onItemLongClick?.invoke(folders[bindingAdapterPosition], card.isChecked, bindingAdapterPosition)
                 }
+
                 return@setOnLongClickListener true
             }
         }
@@ -75,7 +72,7 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
         holder.category.text = currentItem.category
 
         holder.card.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked)
+            if (isChecked)
                 selectedCount++
             else
                 selectedCount--

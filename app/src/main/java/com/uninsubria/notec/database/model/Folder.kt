@@ -8,9 +8,6 @@ import com.uninsubria.notec.R
 @Entity(tableName = "folder_table")
 data class Folder(
 
-    /*@PrimaryKey(autoGenerate = true)
-    var id: Int,*/
-
     @ColumnInfo (name = "category")
     @PrimaryKey
     var category: String,

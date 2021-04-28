@@ -9,7 +9,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,14 +28,13 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_searchable)
 
         adapter = NoteAdapter()
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
 
-        setUpToolbar()
-        setUpRecyclerView()
 
         adapter.onItemClick = {
 
@@ -49,10 +47,8 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
             startActivity(intent)
         }
 
-        /*adapter.onItemLongClick = { _,_ ,_->
-
-            Toast.makeText(this, "LONG TEST", Toast.LENGTH_SHORT).show()
-        }*/
+        setUpToolbar()
+        setUpRecyclerView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,7 +76,7 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         return true
     }
 
-    private fun setUpToolbar () {
+    private fun setUpToolbar() {
         toolbarSearchable.title = ""
         setSupportActionBar(toolbarSearchable)
         toolbarSearchable.setNavigationOnClickListener {
@@ -92,6 +88,8 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
         searchableRecyclerView.adapter = adapter
         searchableRecyclerView.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+        searchableRecyclerView.emptyStateView = emptyView
+        searchableRecyclerView.loadingStateView = loadingView
 
         noteViewModel.getAllNotesAsc().observe(this, Observer { notes ->
             adapter.setData(notes)
@@ -102,7 +100,7 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
         val searchPlateId: Int = context.resources.getIdentifier("android:id/search_plate", null, null)
         val viewGroup = searchView?.findViewById<View>(searchPlateId) as ViewGroup
-        viewGroup.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+        viewGroup.background = ColorDrawable(android.graphics.Color.TRANSPARENT)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -122,7 +120,7 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun searchDatabase(query: String) {
         val filterQuery = "%$query%"
 
-        noteViewModel.searchDatabase(filterQuery).observe(this, Observer {notes ->
+        noteViewModel.searchDatabase(filterQuery).observe(this, Observer { notes ->
             adapter.setData(notes)
         })
     }

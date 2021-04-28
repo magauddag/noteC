@@ -23,7 +23,6 @@ import com.uninsubria.notec.ui.AddCategoryDialog
 import com.uninsubria.notec.util.Util
 import kotlinx.android.synthetic.main.activity_main.*
 
-
 class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener {
 
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
@@ -35,6 +34,7 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
 
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         val intent = Intent(this, SearchableActivity::class.java)
 
         when (item.itemId) {
-            R.id.mi_settings -> { }
+            R.id.mi_settings -> {}
             R.id.mi_search -> startActivity(intent)
             R.id.mi_delete -> return false
             R.id.mi_select_all -> return false
@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         val settingsItem: MenuItem? = menu?.findItem(R.id.mi_settings)
         val deleteItem: MenuItem? = menu?.findItem(R.id.mi_delete)
         val selectAllItem: MenuItem? = menu?.findItem(R.id.mi_select_all)
-
 
         if (NoteAdapter.getCount() > 0 || FolderAdapter.getCount() > 0)
             selectedLayout(searchItem, settingsItem, deleteItem, selectAllItem)
@@ -104,8 +103,6 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
                     fab_button.hide()
                     fab_button.setImageResource(R.drawable.ic_new_note)
                     fab_button.show()
-                    if (NoteAdapter.selectedCount == 0)
-                        fab_button_order.show()
                 }
                 if (tab?.position == 1) {
                     fab_button.hide()
@@ -136,10 +133,13 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         fab_button.show()
         deleteItem?.isVisible = false
         selectAllItem?.isVisible = false
+        if(tab_layout.getChildAt(tab_layout.selectedTabPosition) == tab_layout.getChildAt(0))
+            fab_button_order.show()
     }
 
     private fun selectedLayout(searchItem: MenuItem?, settingsItem: MenuItem?,
                                  deleteItem: MenuItem?, selectAllItem: MenuItem?) {
+
         tab_layout.visibility = View.GONE
         tv_selected.visibility = View.VISIBLE
         viewPagerHome.isUserInputEnabled = false
@@ -153,19 +153,19 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
 
     override fun onBackPressed() {
 
-        if (NoteAdapter.getCount() == 0)
-            finishAffinity()
-        else {
+        if(NoteAdapter.getCount() > 0 || FolderAdapter.getCount() > 0) {
             NoteAdapter.setCount(0)
+            FolderAdapter.setCount(0)
             finish()
             startActivity(intent)
             overridePendingTransition(0, 0)
-        }
+        }else
+            finishAffinity()
     }
 
     override fun onDialogPositiveClick(dialog: Dialog, category: String) {
 
-        if (TextUtils.isEmpty(category))
+        if (TextUtils.isEmpty(category) || category == "Default" || category == "default")
             Toast.makeText(this, getString(R.string.empty_category), Toast.LENGTH_SHORT).show()
         else {
             folderViewModel.insert(

@@ -140,7 +140,7 @@
                 <ImageView
                         android:id="@+id/addedImage"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:scaleType="centerCrop">
                 </ImageView>
             </androidx.cardview.widget.CardView>
@@ -154,13 +154,13 @@
                 android:background="@color/colorBackground"
                 android:inputType="textCapSentences|textMultiLine"
                 android:singleLine="false"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginBottom="50dp"
                 android:textSize="17sp"
                 android:textColorLink="@color/opaqueTextColor"
                 android:gravity="top|start"
                 android:layout_below="@id/imageLinearLayout"
-                android:hint=""
+                android:lineSpacingExtra="3dp"
                 android:textColorHint="@color/opaqueTextColor"
                 android:textColor="@color/opaqueTextColor">
         </EditText>
@@ -175,6 +175,5 @@
         <include layout="@layout/new_note_bottomsheet"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 </RelativeLayout>

@@ -27,6 +27,10 @@ class NoteRepository(private val noteDao: NoteDao) {
         noteDao.deleteAllNotes()
     }
 
+    suspend fun updateCategory(deletedCategory : String) {
+        noteDao.updateCategory(deletedCategory)
+    }
+
     fun searchDatabase(filterQuery : String) : LiveData<List<Note>> {
         return noteDao.searchDatabase(filterQuery)
     }
@@ -34,7 +38,4 @@ class NoteRepository(private val noteDao: NoteDao) {
     fun getFilteredNotes(filterQuery : String): LiveData<List<Note>> {
         return noteDao.getFilteredNotes(filterQuery)
     }
-
-    //fun getAllNotes() = noteDao.getAllNotes()
-
 }

@@ -11,9 +11,7 @@ import com.uninsubria.notec.database.model.Folder
 import com.uninsubria.notec.database.model.Note
 import com.uninsubria.notec.util.Util
 
-// TODO: ExportSchema = False??
-
-@Database (entities = [Note::class, Folder::class], version = 6)
+@Database (entities = [Note::class, Folder::class], version = 7)
 
 @TypeConverters(Converters::class)
 abstract class NoteDatabase: RoomDatabase() {
@@ -78,33 +76,35 @@ abstract class NoteDatabase: RoomDatabase() {
 
                 val util = Util()
 
+                //TODO Change values based on device language
+                /*if(Locale.getDefault().displayLanguage == "Italian") {
+
+                }*/
+
                 return listOf(
                     Note(
                         1,
-                        0,
+                        " ",
                         "Prima nota!",
                         "Scrivi qui",
                         util.getDataShort(),
-                        "Libri",
-                        false
+                        "Libri"
                     ),
                     Note(
                         2,
-                        0,
+                        " ",
                         "CheckList!",
                         "Scrivi qui",
                         util.getDataShort(),
-                        "Spesa",
-                        false
+                        "Spesa"
                     ),
                     Note(
                         3,
-                        0,
+                        " ",
                         "Immagini!",
                         "Scrivi qui",
                         util.getDataShort(),
-                        "Fiori",
-                        false
+                        "Fiori"
                     )
 
                 )

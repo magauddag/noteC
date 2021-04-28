@@ -89,16 +89,16 @@ class NoteViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun updateCategory(deletedCategory : String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateCategory(deletedCategory)
+        }
+    }
+
     fun searchDatabase (filterQuery : String) = repository.searchDatabase(filterQuery)
 
     fun getFilteredNotes(filterQuery: String) = repository.getFilteredNotes(filterQuery)
 
     fun getAllNotesAsc() = repository.readAllData
-
-    fun getAllNotesDesc() = repository.readAllDataDesc
-
-    fun getAllNotesFilteredByCategory() = repository.readAllDataByCategory
-
-    fun getAllNotesFilteredByTitle() = repository.readAllDataByTitle
 
 }

@@ -10,18 +10,17 @@
     <string name="share">Condividi</string>
     <string name="take_a_photo">Scatta una foto</string>
     <string name="choose_photo">Scegli una foto dalla galleria</string>
-    <string name="add_checklist">Aggiungi una checklist</string>
     <string name="success">Nota salvata!</string>
     <string name="all">Tutte</string>
     <string name="categories">Categorie</string>
-    <string name="shared">Da noteC</string>
+    <string name="shared">Da noteC:</string>
     <string name="add_category">Aggiungi categoria</string>
     <string name="confirm">Conferma</string>
     <string name="cancel">Annulla</string>
     <string name="add_a_new_category">Aggiungi nuova categoria</string>
     <string name="update_message">Nota modificata!</string>
-    <string name="category_added">" aggiunta!"</string>
-    <string name="empty_category">Aggiungi una categoria</string>
+    <string name="category_added">" aggiunta"</string>
+    <string name="empty_category">Il campo categoria non può essere vuoto nè chiamato Default</string>
     <string name="choose_category">Scegli una categoria…</string>
     <string name="title_note1">La tua prima nota!</string>
     <string name="title_note2">Checklist!</string>
@@ -39,4 +38,14 @@
     <string name="selected_items_will_be_deleted">Gli elementi selezionati verranno eliminati</string>
     <string name="single_item_selected">" elemento selezionato"</string>
     <string name="multiple_items_selected">" elementi selezionati"</string>
+    <string name="no_results_title">Nessun risultato</string>
+    <string name="zero_categories">Nessuna categoria aggiunta</string>
+    <string name="zero_notes">Scrivi la tua prima nota</string>
+    <string name="category_empty">Categoria vuota</string>
+    <string name="add_bulletlist">Aggiungi lista</string>
+    <string name="remove_bulletlist">Rimuovi lista</string>
+    <string name="camera_perm">Autorizzazione necessaria per usare la fotocamera</string>
+    <string name="gallery_perm">Autorizzazione necessaria per accedere ai contenuti multimediali</string>
+    <string name="delete_folder_alert">"Gli elementi selezionati verranno eliminati, ogni nota presente in queste categorie sarà spostata nella sezione Default"</string>
+    <string name="default_cant_be_deleted">La categoria Default non può essere eliminata</string>
 </resources>

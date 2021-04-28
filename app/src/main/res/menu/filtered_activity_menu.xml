@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-            android:title="Delete note"
-            android:icon="@drawable/ic_delete"
+            android:id="@+id/mi_delete_filtered"
+            android:title="@string/delete"
+            android:icon="@drawable/custom_delete_icon"
             android:orderInCategory="2"
-            app:showAsAction="always">
+            app:showAsAction="ifRoom">
 
     </item>
 
     <item
-            android:title="Delete all"
-            android:icon="@drawable/ic_all"
+            android:id="@+id/mi_select_all_filtered"
+            android:title="@string/select_all"
+            android:icon="@drawable/custom_select_all_icon"
             android:orderInCategory="1"
             app:showAsAction="always">
 

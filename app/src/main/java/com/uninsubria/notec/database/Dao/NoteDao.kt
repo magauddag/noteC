@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.uninsubria.notec.database.model.Note
 
-// TODO: Create Dao for each other entity (Folder)
-
 @Dao
 interface NoteDao {
 
@@ -20,6 +18,9 @@ interface NoteDao {
 
     @Query("DELETE FROM note_table")
     suspend fun deleteAllNotes()
+
+    @Query("UPDATE note_table SET category = 'Default' WHERE category = :deletedCategory")
+    suspend fun updateCategory(deletedCategory : String)
 
     @Query("SELECT * FROM note_table ORDER BY id ASC")
     fun getAllNotes() : LiveData<List<Note>>

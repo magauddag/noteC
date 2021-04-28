@@ -1,13 +1,14 @@
 package com.uninsubria.notec.activities
 
+import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.pm.PackageManager
 import android.graphics.Rect
-import android.os.Bundle
-import android.os.SystemClock
+import android.net.Uri
+import android.os.*
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
@@ -15,23 +16,31 @@ import android.text.TextWatcher
 import android.text.util.Linkify
 import android.view.*
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ListPopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.uninsubria.notec.BuildConfig
 import com.uninsubria.notec.R
 import com.uninsubria.notec.database.model.Folder
-import com.uninsubria.notec.database.viewmodel.FolderViewModel
 import com.uninsubria.notec.database.model.Note
+import com.uninsubria.notec.database.viewmodel.FolderViewModel
 import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import com.uninsubria.notec.ui.AddCategoryDialog
 import com.uninsubria.notec.util.MyMovementMethod
 import com.uninsubria.notec.util.Util
 import kotlinx.android.synthetic.main.activity_create_note.*
 import kotlinx.android.synthetic.main.new_note_bottomsheet.*
-import kotlin.collections.ArrayList
-
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener {
 
@@ -40,13 +49,16 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         const val EXTRA_TITLE = "com.uninsubria.notec.EXTRA_TITLE"
         const val EXTRA_BODY = "com.uninsubria.notec.EXTRA_BODY"
         const val EXTRA_CATEGORY = "com.uninsubria.notec.EXTRA_CATEGORY"
+        const val EXTRA_PATH = "com.uninsubria.notec.EXTRA_PATH"
         const val CAMERA_REQUEST = 100
         const val GALLERY_REQUEST = 101
         const val CAMERA_PERM_CODE = 102
+        const val GALLERY_PERM_CODE = 103
     }
 
     private val util = Util()
     private val listPopupWindow by lazy { ListPopupWindow(this) }
+    private var currentPhotoPath: String? = null
 
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
@@ -54,9 +66,9 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     private lateinit var arrayAdapter: ArrayAdapter<String>
     private lateinit var categoryList: ArrayList<String>
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_create_note)
 
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
@@ -66,7 +78,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         arrayAdapter = ArrayAdapter(this, R.layout.style_spinner, categoryList)
 
         setUpToolbar()
-        //setUpSpinner()
         setUpListpopup()
         setUpBottomSheet()
         manageLinksEditText()
@@ -82,9 +93,23 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             et_body.setText(intent.getStringExtra(IntentId.EXTRA_BODY))
         }
 
+        //clicked note has image
+        if (intent.getStringExtra(IntentId.EXTRA_PATH) != null) {
+            imageLinearLayout.visibility = View.VISIBLE
+            currentPhotoPath = intent.getStringExtra(IntentId.EXTRA_PATH)
+            addedImage.setImageURI(Uri.parse(currentPhotoPath))
+        }
+
+        //activity opened after clicking on existing note in specific folder
+        if (intent.hasExtra((FilteredNotesActivity.IDs.EXTRA_CATEGORY_FOR_CREATE_NOTE)))
+            textviewspinner.text = intent.getStringExtra(FilteredNotesActivity.IDs.EXTRA_CATEGORY_FOR_CREATE_NOTE)
+
         //Uncomment to make keyboard pop up on opening activity
-        if(et_body.requestFocus()) {
+        if (et_body.requestFocus())
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+
+        addedImage.setOnClickListener {
+            imageClicked(currentPhotoPath)
         }
     }
 
@@ -126,7 +151,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
         var noteTitle = et_title.text.toString().trim()
         var noteBody = et_body.text.toString().trim()
-        //val category = spinner.selectedItem.toString().trim()
         val category = textviewspinner.text.toString().trim()
         val note: Note?
 
@@ -146,15 +170,15 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             folderViewModel.insert(Folder(getString(R.string.default_folder)))
             Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
             note = Note(
-                0, 0, noteTitle, noteBody,
-                util.getDataShort(), getString(R.string.default_folder), false
+                    0, currentPhotoPath, noteTitle, noteBody,
+                    util.getDataShort(), getString(R.string.default_folder)/*, false*/
             )
-        }else {
+        } else {
             note =
-                Note(
-                    0, 0, noteTitle, noteBody,
-                    util.getDataShort(), util.lowerCaseNotFirst(category), false
-                )
+                    Note(
+                            0, currentPhotoPath, noteTitle, noteBody,
+                            util.getDataShort(), util.lowerCaseNotFirst(category)/*, false*/
+                    )
             Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show()
         }
 
@@ -171,23 +195,22 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         val noteID = intent.getIntExtra(IntentId.EXTRA_ID, 0)
         val noteTitle = et_title.text.toString().trim()
         val noteBody = et_body.text.toString().trim()
-        //val category = spinner.selectedItem.toString().trim()
         val category = textviewspinner.text.toString().trim()
 
         val note: Note?
 
         if (category == getString(R.string.choose_category)) {
             note = Note(
-                noteID, 0, noteTitle, noteBody,
-                util.getDataShort(), getString(R.string.default_folder), false
+                    noteID, currentPhotoPath, noteTitle, noteBody,
+                    util.getDataShort(), getString(R.string.default_folder)/*, false*/
             )
             Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
-        }else {
+        } else {
             note =
-                Note(
-                    noteID, 0, noteTitle, noteBody,
-                    util.getDataShort(), category, false
-                )
+                    Note(
+                            noteID, currentPhotoPath, noteTitle, noteBody,
+                            util.getDataShort(), category/*, false*/
+                    )
             Toast.makeText(this, getString(R.string.update_message), Toast.LENGTH_SHORT).show()
         }
 
@@ -199,13 +222,12 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
     private fun shareNote() {
 
-        val note = "${et_title.text.trim()}\n" +
-                "${et_body.text.trim()}\n\n" +
+        val note = "${et_body.text.trim()}\n\n" +
                 "${tv_date.text}"
 
         val intent = Intent()
         intent.action = Intent.ACTION_SEND
-        intent.putExtra(Intent.EXTRA_TEXT, "${getString(R.string.all)}\n\n$note")
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.shared) + "\n\n$note")
         intent.type = "text/plain, image/jpeg, image/png"
         startActivity(Intent.createChooser(intent, "Share To:"))
     }
@@ -221,6 +243,21 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         myToolbar2.setNavigationOnClickListener {
             onBackPressed()
         }
+    }
+
+    private fun imageClicked(path: String?) {
+        val intent = Intent(this, ImageActivity::class.java)
+        intent.putExtra(IntentId.EXTRA_PATH, path)
+        startActivity(intent)
+        /*val intent = Intent()
+        intent.action = Intent.ACTION_VIEW
+        intent.setDataAndType(FileProvider.getUriForFile(
+                Objects.requireNonNull(applicationContext),
+        BuildConfig.APPLICATION_ID + ".provider",
+        ))
+        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        startActivity(intent)*/
+
     }
 
     private fun setUpListpopup() {
@@ -245,32 +282,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         }
     }
 
-    private fun setUpSpinner() {
-
-        folderViewModel.getAllCategories().observe(this, Observer { categories ->
-            arrayAdapter.addAll(categories)
-            categoryList.addAll(categories)
-        })
-
-        /*spinner.adapter = arrayAdapter
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                invalidateOptionsMenu()
-
-                val selectedItem = parent?.getChildAt(0) as? TextView
-                selectedItem?.setTextColor(resources.getColor(R.color.text_color_secondary))
-                selectedItem?.textSize = 20F
-            }
-        }
-
-        if (intent.hasExtra(IntentId.EXTRA_ID)) {
-            spinner.setSelection(categoryList.indexOf(intent.getStringExtra(IntentId.EXTRA_CATEGORY)))
-        }*/
-    }
-
     private fun setUpBottomSheet() {
 
         BottomSheetBehavior.from(new_note_bottomsheet).apply {
@@ -284,36 +295,32 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             }
             val bottomSheetBehaviorCallback =
 
-                object : BottomSheetBehavior.BottomSheetCallback() {
+                    object : BottomSheetBehavior.BottomSheetCallback() {
 
-                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                        arrow.rotation = slideOffset * 180
-                    }
+                        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                            arrow.rotation = slideOffset * 180
+                        }
 
-                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        }
                     }
-                }
-            this.setBottomSheetCallback(bottomSheetBehaviorCallback)
+            this.addBottomSheetCallback(bottomSheetBehaviorCallback)
             this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         linearLayout1.setOnClickListener {
-
-            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(takePictureIntent,
-                IntentId.CAMERA_REQUEST
-            )
+            askCameraPermission()
         }
 
         linearLayout2.setOnClickListener {
-            val galleryIntent = Intent(Intent.ACTION_GET_CONTENT)
-            galleryIntent.type = "image/*"
+            askGalleryPermission()
+        }
 
-            if (galleryIntent.resolveActivity(packageManager) != null) {
-                startActivityForResult(galleryIntent,
-                    IntentId.GALLERY_REQUEST
-                )
-            }
+        linearLayout3.setOnClickListener {
+            if (!bulletlistExist())
+                createBullets()
+            else
+                removeBullets()
         }
 
         linearLayout4.setOnClickListener {
@@ -325,17 +332,24 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
         when (requestCode) {
             IntentId.CAMERA_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK && data != null) {
+                if (resultCode == Activity.RESULT_OK) {
                     imageLinearLayout.visibility = View.VISIBLE
-                    val bitmap: Bitmap = data.extras?.get("data") as Bitmap
-                    val cameraPhoto = Bitmap.createScaledBitmap(bitmap, 440, 900,true)
-                    addedImage.setImageBitmap(cameraPhoto)
+                    addedImage.setImageURI(Uri.parse(currentPhotoPath))
                 }
             }
+
             IntentId.GALLERY_REQUEST -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     imageLinearLayout.visibility = View.VISIBLE
+
                     val imageUri = data.data
+                    val takeFlag = data.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION) or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+
+                    if (imageUri != null)
+                        this.contentResolver.takePersistableUriPermission(imageUri, takeFlag)
+
+                    //val inputStream = imageUri?.let { baseContext.contentResolver.openInputStream(it) }
+                    currentPhotoPath = imageUri.toString()
                     addedImage.setImageURI(imageUri)
                 }
             }
@@ -369,13 +383,16 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         et_body.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
                 invalidateOptionsMenu()
+                bulletlistExist()
             }
 
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+            override fun onTextChanged(s: CharSequence, start: Int, lengthBefore: Int, lengthAfter: Int) {
                 invalidateOptionsMenu()
+                bulletlistExist()
             }
 
             override fun afterTextChanged(s: Editable) {
+                bulletlistExist()
                 Linkify.addLinks(s, Linkify.WEB_URLS)
             }
         })
@@ -389,24 +406,28 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                 invalidateOptionsMenu()
             }
 
-            override fun afterTextChanged(s: Editable) { }
+            override fun afterTextChanged(s: Editable) {}
         })
     }
 
     override fun onDialogPositiveClick(dialog: Dialog, category: String) {
-        if (TextUtils.isEmpty(category))
+        if (TextUtils.isEmpty(category) || category == "Default" || category == "default")
             Toast.makeText(this, getString(R.string.empty_category), Toast.LENGTH_SHORT).show()
         else {
             arrayAdapter.clear()
             folderViewModel.insert(
-                Folder(
-                    util.lowerCaseNotFirst(
-                        category
+                    Folder(
+                            util.lowerCaseNotFirst(
+                                    category
+                            )
                     )
-                )
             )
             textviewspinner.text = util.lowerCaseNotFirst(category).trim()
-            Toast.makeText(this, util.lowerCaseNotFirst(category) + getString(R.string.category_added), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    this,
+                    util.lowerCaseNotFirst(category) + getString(R.string.category_added),
+                    Toast.LENGTH_SHORT
+            ).show()
             dialog.dismiss()
         }
     }
@@ -424,27 +445,68 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
+    private fun createBullets() {
 
+        if (!TextUtils.isEmpty(et_body.text.toString())) {
+            val lines = et_body.text.toString().split("\n")
+            var tmp = ""
 
-    /*@Throws(IOException::class)
+            for (i in lines.indices) {
+                if (lines[i].isEmpty() || lines[i][0] != '●') {
+                    tmp += if (i == lines.size - 1)
+                        "● ${lines[i]}"
+                    else
+                        "● ${lines[i]}\n"
+                } else {
+                    return
+                }
+            }
+            et_body.setText(tmp)
+            et_body.setSelection(et_body.text.toString().length)
+        }
+    }
+
+    private fun removeBullets() {
+
+        if (!TextUtils.isEmpty(et_body.text.toString())) {
+            et_body.setText(et_body.text.toString().replace("● ", ""))
+            et_body.setText(et_body.text.toString().replace("●", ""))
+            et_body.setSelection(et_body.text.toString().length)
+        }
+    }
+
+    private fun bulletlistExist(): Boolean {
+        val lines = et_body.text.toString().split("\n")
+
+        for (i in lines.indices) {
+            if (lines[i].isNotEmpty() && lines[i][0] == '●') {
+                textView3.text = getString(R.string.remove_bulletlist)
+                return true
+            }
+        }
+        textView3.text = getString(R.string.add_bulletlist)
+        return false
+    }
+
+    @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-                "JPEG_${timeStamp}_", *//* prefix *//*
-                ".jpg", *//* suffix *//*
-                storageDir *//* directory *//*
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
 
         }
-    }*/
+    }
 
-    /*private fun dispatchTakePictureIntent() {
+    private fun dispatchTakePictureIntent() {
 
-        val builder = VmPolicy.Builder()
+        val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -460,93 +522,60 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
             startActivityForResult(takePictureIntent, IntentId.CAMERA_REQUEST)
         }
-    }*/
+    }
 
-    /*private fun dispatchTakePictureIntent() {
+    private fun dispatchGalleryIntent() {
+        val galleryIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        galleryIntent.type = "image/*"
 
-       *//* val shareIntent = Intent(Intent.ACTION_VIEW).apply {
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-            data = Uri.fromFile(File(currentPhotoPath))
-        }*//*
-
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-
-                // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) { null }
-                // Continue only if the File was successfully created
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                        Objects.requireNonNull(applicationContext),
-                        "com.uninsubria.notec.provider",
-                        it
-                    )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    //takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    startActivityForResult(takePictureIntent, IntentId.CAMERA_REQUEST)
-                }
-        }
-    }*/
-
-
-
-    /*private fun askCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(Manifest.permission.CAMERA),
-                IntentId.CAMERA_PERM_CODE
-            )
-        } else {
-            dispatchTakePictureIntent()
-        }
-    }*/
-
-    /*override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-
-        if(requestCode == IntentId.CAMERA_PERM_CODE){
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                dispatchTakePictureIntent();
-            }else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }*/
-
-    /*private fun galleryAddPic() {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(f)
-            sendBroadcast(mediaScanIntent)
+        if (galleryIntent.resolveActivity(packageManager) != null) {
+            startActivityForResult( galleryIntent, IntentId.GALLERY_REQUEST)
         }
     }
 
-    private fun scaleDownPic() {
-        // Get the dimensions of the View
-        val targetW: Int = addedImage.width
-        val targetH: Int = addedImage.height
+    private fun askCameraPermission() {
 
-        val bmOptions = BitmapFactory.Options().apply {
-            // Get the dimensions of the bitmap
-            inJustDecodeBounds = true
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.CAMERA),
+                    IntentId.CAMERA_PERM_CODE
+            )
+        } else
+            dispatchTakePictureIntent()
+    }
 
-            BitmapFactory.decodeFile(currentPhotoPath, this)
+    private fun askGalleryPermission() {
 
-            val photoW: Int = outWidth
-            val photoH: Int = outHeight
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    IntentId.GALLERY_PERM_CODE
+            )
+        } else
+            dispatchGalleryIntent()
+    }
 
-            // Determine how much to scale down the image
-            val scaleFactor: Int = Math.max(1, Math.min(photoW / targetW, photoH / targetH))
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
 
-            // Decode the image file into a Bitmap sized to fill the View
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor
-            inPurgeable = true
+        when(requestCode) {
+            IntentId.CAMERA_PERM_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchTakePictureIntent()
+                } else {
+                    Toast.makeText(this, getString(R.string.camera_perm), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            IntentId.GALLERY_PERM_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchGalleryIntent()
+                } else {
+                    Toast.makeText(this, getString(R.string.gallery_perm), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            addedImage.setImageBitmap(bitmap)
-        }
-    }*/
+    }
+
 }

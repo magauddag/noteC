@@ -1,7 +1,6 @@
 package com.uninsubria.notec.fragment
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -14,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -23,7 +23,6 @@ import com.uninsubria.notec.adapter.NoteAdapter
 import com.uninsubria.notec.database.model.Note
 import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import com.uninsubria.notec.util.SortType
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_notes.*
 
 class NotesFragment : Fragment() {
@@ -48,11 +47,10 @@ class NotesFragment : Fragment() {
         noteAdapter = NoteAdapter()
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
-
-        recyclerViewNotes.adapter = noteAdapter
-        recyclerViewNotes.layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+        val selectedNotesNumberText = activity?.findViewById<TextView>(R.id.tv_selected)
 
         displayNotes()
+        setUpRecyclerView()
 
         noteAdapter.onItemClick = {
             val intent = Intent(this.context, CreateNoteActivity::class.java)
@@ -61,10 +59,9 @@ class NotesFragment : Fragment() {
             intent.putExtra(CreateNoteActivity.IntentId.EXTRA_TITLE, it.title)
             intent.putExtra(CreateNoteActivity.IntentId.EXTRA_BODY, it.body)
             intent.putExtra(CreateNoteActivity.IntentId.EXTRA_CATEGORY, it.category)
+            intent.putExtra(CreateNoteActivity.IntentId.EXTRA_PATH, it.image)
             startActivity(intent)
         }
-
-        val selectedNotesNumberText = activity?.findViewById<TextView>(R.id.tv_selected)
 
         noteAdapter.onItemSelected = {note, noteSelected, position ->
             activity?.invalidateOptionsMenu()
@@ -81,7 +78,6 @@ class NotesFragment : Fragment() {
             else
                 toBeDeleted.remove(position)
         }
-
 
         noteAdapter.onItemLongClick = { note, noteSelected, position ->
             activity?.invalidateOptionsMenu()
@@ -101,7 +97,7 @@ class NotesFragment : Fragment() {
 
         val fabOrderNotes = activity?.findViewById<FloatingActionButton>(R.id.fab_button_order)
         fabOrderNotes?.setOnClickListener {
-            showDialog()
+            showOrderDialog()
         }
     }
 
@@ -115,7 +111,32 @@ class NotesFragment : Fragment() {
         return true
     }
 
-    private fun showDialog() {
+    private val itemTouchCallback = object : ItemTouchHelper.SimpleCallback (0, ItemTouchHelper.RIGHT) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ) = true
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.bindingAdapterPosition
+            val item = noteAdapter.notes[position]
+            toBeDeleted[position] = item
+            showDeleteNoteDialog()
+        }
+    }
+
+    private fun setUpRecyclerView() {
+        recyclerViewNotes.apply {
+            layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+            emptyStateView = emptyView
+            loadingStateView = loadingView
+            adapter = noteAdapter
+            ItemTouchHelper(itemTouchCallback).attachToRecyclerView(this)
+        }
+    }
+
+    private fun showOrderDialog() {
         val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -174,10 +195,12 @@ class NotesFragment : Fragment() {
             }
             NoteAdapter.setCount(0)
             activity?.invalidateOptionsMenu()
+            toBeDeleted.clear()
             dialog.dismiss()
         }
 
         noBtn.setOnClickListener {
+            displayNotes()
             dialog.dismiss()
         }
         dialog.show()
@@ -197,11 +220,8 @@ class NotesFragment : Fragment() {
         })
     }
 
-
     companion object {
-
         var sortType = SortType.ASC
-
         @JvmStatic
         fun newInstance() =
             NotesFragment().apply {
