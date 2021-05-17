@@ -10,9 +10,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.Window
 import android.widget.Button
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.uninsubria.notec.R
@@ -94,7 +94,6 @@ class FilteredNotesActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.mi_delete_filtered -> showDeleteNoteDialog()
-            R.id.mi_select_all_filtered -> Toast.makeText(this, "all selected", Toast.LENGTH_SHORT).show()
         }
         return true
     }
@@ -128,17 +127,14 @@ class FilteredNotesActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
 
         val deleteItem: MenuItem? = menu?.findItem(R.id.mi_delete_filtered)
-        val selectAllItem: MenuItem? = menu?.findItem(R.id.mi_select_all_filtered)
 
         if (NoteAdapter.getCount() == 0) {
             deleteItem?.isEnabled = false
-            selectAllItem?.isEnabled = false
             fab_button_filtered.show()
             filteredToolbar.setNavigationIcon(R.drawable.ic_back)
         }
         else {
             deleteItem?.isEnabled = true
-            selectAllItem?.isEnabled = true
             fab_button_filtered.hide()
             filteredToolbar.setNavigationIcon(R.drawable.ic_clear)
         }
@@ -166,6 +162,7 @@ class FilteredNotesActivity : AppCompatActivity() {
             emptyStateView = emptyView
             loadingStateView = loadingView
             adapter = noteAdapter
+            ItemTouchHelper(itemTouchCallback).attachToRecyclerView(this)
         }
 
         noteViewModel.getFilteredNotes(category).observe(this, Observer {notes ->
@@ -190,5 +187,20 @@ class FilteredNotesActivity : AppCompatActivity() {
             overridePendingTransition(0, 0)
         }else
             super.onBackPressed()
+    }
+
+    private val itemTouchCallback = object : ItemTouchHelper.SimpleCallback (0, ItemTouchHelper.RIGHT) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ) = true
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val position = viewHolder.bindingAdapterPosition
+            val item = noteAdapter.notes[position]
+            toBeDeleted[position] = item
+            showDeleteNoteDialog()
+        }
     }
 }

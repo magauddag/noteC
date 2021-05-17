@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.uninsubria.notec.R
-import com.uninsubria.notec.adapter.NoteAdapter
+import com.uninsubria.notec.adapter.SearchableNoteAdapter
 import com.uninsubria.notec.database.viewmodel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_searchable.*
 
@@ -24,14 +24,14 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     private lateinit var factory: ViewModelProvider.AndroidViewModelFactory
     private lateinit var noteViewModel: NoteViewModel
-    private lateinit var adapter: NoteAdapter
+    private lateinit var adapter: SearchableNoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_searchable)
 
-        adapter = NoteAdapter()
+        adapter = SearchableNoteAdapter()
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         noteViewModel = ViewModelProvider(this, factory).get(NoteViewModel::class.java)
 
@@ -134,8 +134,4 @@ class SearchableActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         return super.dispatchTouchEvent(event)
     }
 
-    override fun onBackPressed() {
-        NoteAdapter.setCount(0)
-        super.onBackPressed()
-    }
 }

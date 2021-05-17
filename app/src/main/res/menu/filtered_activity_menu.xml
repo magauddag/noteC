@@ -11,13 +11,4 @@
 
     </item>
 
-    <item
-            android:id="@+id/mi_select_all_filtered"
-            android:title="@string/select_all"
-            android:icon="@drawable/custom_select_all_icon"
-            android:orderInCategory="1"
-            app:showAsAction="always">
-
-    </item>
-
 </menu>

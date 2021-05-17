@@ -10,7 +10,7 @@
     <string name="share">Condividi</string>
     <string name="take_a_photo">Scatta una foto</string>
     <string name="choose_photo">Scegli una foto dalla galleria</string>
-    <string name="success">Nota salvata!</string>
+    <string name="success">Nota salvata</string>
     <string name="all">Tutte</string>
     <string name="categories">Categorie</string>
     <string name="shared">Da noteC:</string>
@@ -18,7 +18,7 @@
     <string name="confirm">Conferma</string>
     <string name="cancel">Annulla</string>
     <string name="add_a_new_category">Aggiungi nuova categoria</string>
-    <string name="update_message">Nota modificata!</string>
+    <string name="update_message">Nota modificata</string>
     <string name="category_added">" aggiunta"</string>
     <string name="empty_category">Il campo categoria non può essere vuoto nè chiamato Default</string>
     <string name="choose_category">Scegli una categoria…</string>
@@ -47,5 +47,11 @@
     <string name="camera_perm">Autorizzazione necessaria per usare la fotocamera</string>
     <string name="gallery_perm">Autorizzazione necessaria per accedere ai contenuti multimediali</string>
     <string name="delete_folder_alert">"Gli elementi selezionati verranno eliminati, ogni nota presente in queste categorie sarà spostata nella sezione Default"</string>
-    <string name="default_cant_be_deleted">La categoria Default non può essere eliminata</string>
+    <string name="default_cant_be_deleted">Questa categoria non può essere eliminata</string>
+    <string name="image_deleted">Immagine rimossa</string>
+    <string name="appearance">Aspetto</string>
+    <string name="version">versione 1.0</string>
+    <string name="default_description">Usa lo stesso tema del tuo dispositivo</string>
+    <string name="light_description">Usa sempre il tema chiaro</string>
+    <string name="dark_description">Usa sempre il tema scuro</string>
 </resources>

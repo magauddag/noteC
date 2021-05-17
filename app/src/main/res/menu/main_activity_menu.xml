@@ -27,13 +27,4 @@
             android:orderInCategory="1"
             app:iconTint="@color/text_color_secondary"
             app:showAsAction="ifRoom"/>
-
-    <item
-            android:id="@+id/mi_select_all"
-            android:icon="@drawable/ic_all"
-            android:title="@string/select_all"
-            android:visible="false"
-            android:orderInCategory="2"
-            app:iconTint="@color/text_color_secondary"
-            app:showAsAction="ifRoom"/>
 </menu>

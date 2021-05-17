@@ -1,5 +1,7 @@
 package com.uninsubria.notec.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +15,7 @@ import kotlinx.android.synthetic.main.activity_image.*
 class ImageActivity : AppCompatActivity() {
 
     val util = Util()
+    private var photoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +27,7 @@ class ImageActivity : AppCompatActivity() {
         setUpToolbar()
 
         if(intent.hasExtra(CreateNoteActivity.IntentId.EXTRA_PATH)) {
-            val photoPath = (intent.getStringExtra(CreateNoteActivity.IntentId.EXTRA_PATH))
+            photoPath = intent.getStringExtra(CreateNoteActivity.IntentId.EXTRA_PATH)
             chosenImage.setImageURI(Uri.parse(photoPath))
         }
     }
@@ -37,8 +40,11 @@ class ImageActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.mi_delete_image -> {
-                chosenImage.setImageDrawable(null)
-                Toast.makeText(this, "Image deleted", Toast.LENGTH_SHORT).show()
+                photoPath = null
+                val resultIntent = Intent()
+                resultIntent.putExtra("PATH", photoPath as String?)
+                setResult(Activity.RESULT_OK, resultIntent)
+                Toast.makeText(this, getString(R.string.image_deleted), Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

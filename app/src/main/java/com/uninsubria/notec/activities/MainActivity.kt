@@ -2,6 +2,7 @@ package com.uninsubria.notec.activities
 
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
         setContentView(R.layout.activity_main)
+        setAppearance()
 
         factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         folderViewModel = ViewModelProvider(this, factory).get(FolderViewModel::class.java)
@@ -59,13 +62,13 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val intent = Intent(this, SearchableActivity::class.java)
+        val searchIntent = Intent(this, SearchableActivity::class.java)
+        val settingsIntent = Intent(this, SettingsActivity::class.java)
 
         when (item.itemId) {
-            R.id.mi_settings -> {}
-            R.id.mi_search -> startActivity(intent)
+            R.id.mi_settings -> startActivity(settingsIntent)
+            R.id.mi_search -> startActivity(searchIntent)
             R.id.mi_delete -> return false
-            R.id.mi_select_all -> return false
         }
         return true
     }
@@ -74,12 +77,11 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         val searchItem: MenuItem? = menu?.findItem(R.id.mi_search)
         val settingsItem: MenuItem? = menu?.findItem(R.id.mi_settings)
         val deleteItem: MenuItem? = menu?.findItem(R.id.mi_delete)
-        val selectAllItem: MenuItem? = menu?.findItem(R.id.mi_select_all)
 
         if (NoteAdapter.getCount() > 0 || FolderAdapter.getCount() > 0)
-            selectedLayout(searchItem, settingsItem, deleteItem, selectAllItem)
+            selectedLayout(searchItem, settingsItem, deleteItem)
         else
-           unselectedLayout(searchItem, settingsItem, deleteItem, selectAllItem)
+           unselectedLayout(searchItem, settingsItem, deleteItem)
 
         return true
     }
@@ -123,8 +125,19 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         }
     }
 
+    private fun setAppearance() {
+        val mPrefs: SharedPreferences = getSharedPreferences("ThemePref", 0)
+        val themeMode = mPrefs.getInt("themeValue", 2)
+
+        when(themeMode) {
+            0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
     private fun unselectedLayout(searchItem: MenuItem?, settingsItem: MenuItem?,
-                               deleteItem: MenuItem?, selectAllItem: MenuItem?) {
+                               deleteItem: MenuItem?) {
         tab_layout.visibility = View.VISIBLE
         tv_selected.visibility = View.GONE
         viewPagerHome.isUserInputEnabled = true
@@ -132,13 +145,12 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         settingsItem?.isVisible = true
         fab_button.show()
         deleteItem?.isVisible = false
-        selectAllItem?.isVisible = false
         if(tab_layout.getChildAt(tab_layout.selectedTabPosition) == tab_layout.getChildAt(0))
             fab_button_order.show()
     }
 
     private fun selectedLayout(searchItem: MenuItem?, settingsItem: MenuItem?,
-                                 deleteItem: MenuItem?, selectAllItem: MenuItem?) {
+                                 deleteItem: MenuItem?) {
 
         tab_layout.visibility = View.GONE
         tv_selected.visibility = View.VISIBLE
@@ -148,7 +160,6 @@ class MainActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogListener
         fab_button.hide()
         fab_button_order.hide()
         deleteItem?.isVisible = true
-        selectAllItem?.isVisible = true
     }
 
     override fun onBackPressed() {

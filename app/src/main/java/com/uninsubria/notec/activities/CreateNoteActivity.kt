@@ -54,6 +54,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         const val GALLERY_REQUEST = 101
         const val CAMERA_PERM_CODE = 102
         const val GALLERY_PERM_CODE = 103
+        const val IMAGE_ACTIVITY = 104
     }
 
     private val util = Util()
@@ -171,19 +172,18 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
             note = Note(
                     0, currentPhotoPath, noteTitle, noteBody,
-                    util.getDataShort(), getString(R.string.default_folder)/*, false*/
+                    util.getDataShort(), getString(R.string.default_folder)
             )
         } else {
             note =
                     Note(
                             0, currentPhotoPath, noteTitle, noteBody,
-                            util.getDataShort(), util.lowerCaseNotFirst(category)/*, false*/
+                            util.getDataShort(), util.lowerCaseNotFirst(category)
                     )
             Toast.makeText(this, getString(R.string.success), Toast.LENGTH_SHORT).show()
         }
 
         noteViewModel.insert(note)
-
         SystemClock.sleep(500)
         startActivity(Intent(this, MainActivity::class.java))
     }
@@ -202,20 +202,19 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         if (category == getString(R.string.choose_category)) {
             note = Note(
                     noteID, currentPhotoPath, noteTitle, noteBody,
-                    util.getDataShort(), getString(R.string.default_folder)/*, false*/
+                    util.getDataShort(), getString(R.string.default_folder)
             )
             Toast.makeText(this, getString(R.string.no_category_msg), Toast.LENGTH_LONG).show()
         } else {
             note =
                     Note(
                             noteID, currentPhotoPath, noteTitle, noteBody,
-                            util.getDataShort(), category/*, false*/
+                            util.getDataShort(), category
                     )
             Toast.makeText(this, getString(R.string.update_message), Toast.LENGTH_SHORT).show()
         }
 
         noteViewModel.update(note)
-
         SystemClock.sleep(500)
         startActivity(Intent(this, MainActivity::class.java))
     }
@@ -248,7 +247,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     private fun imageClicked(path: String?) {
         val intent = Intent(this, ImageActivity::class.java)
         intent.putExtra(IntentId.EXTRA_PATH, path)
-        startActivity(intent)
+        startActivityForResult(intent, IntentId.IMAGE_ACTIVITY)
+
         /*val intent = Intent()
         intent.action = Intent.ACTION_VIEW
         intent.setDataAndType(FileProvider.getUriForFile(
@@ -305,7 +305,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                         }
                     }
             this.addBottomSheetCallback(bottomSheetBehaviorCallback)
-            this.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         linearLayout1.setOnClickListener {
@@ -348,11 +347,18 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     if (imageUri != null)
                         this.contentResolver.takePersistableUriPermission(imageUri, takeFlag)
 
-                    //val inputStream = imageUri?.let { baseContext.contentResolver.openInputStream(it) }
                     currentPhotoPath = imageUri.toString()
                     addedImage.setImageURI(imageUri)
                 }
             }
+
+            IntentId.IMAGE_ACTIVITY -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    currentPhotoPath = data?.getStringExtra("PATH")
+                    imageLinearLayout.visibility = View.GONE
+                }
+            }
+
             else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
@@ -528,9 +534,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         val galleryIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         galleryIntent.type = "image/*"
 
-        if (galleryIntent.resolveActivity(packageManager) != null) {
-            startActivityForResult( galleryIntent, IntentId.GALLERY_REQUEST)
-        }
+        startActivityForResult(galleryIntent, IntentId.GALLERY_REQUEST)
     }
 
     private fun askCameraPermission() {
@@ -550,7 +554,7 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                     this,
-                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    arrayOf(Manifest.permission_group.STORAGE),
                     IntentId.GALLERY_PERM_CODE
             )
         } else
@@ -558,6 +562,8 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when(requestCode) {
             IntentId.CAMERA_PERM_CODE -> {
@@ -577,5 +583,4 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
             }
         }
     }
-
 }

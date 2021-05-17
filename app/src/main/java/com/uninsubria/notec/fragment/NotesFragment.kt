@@ -9,8 +9,8 @@ import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -106,7 +106,6 @@ class NotesFragment : Fragment() {
             R.id.mi_search -> return false
             R.id.mi_settings -> return false
             R.id.mi_delete -> showDeleteNoteDialog()
-            R.id.mi_select_all -> Toast.makeText(this.context, "selezionate", Toast.LENGTH_SHORT).show()
         }
         return true
     }

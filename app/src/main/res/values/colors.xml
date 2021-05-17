@@ -1,28 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorOnSurface">#272636</color>
-    <color name="colorBackground">#1F1D2B</color>
+    <color name="colorOnSurface">#D1C4E9</color>
+    <color name="colorBackground">#B4B0E6</color>
     <color name="colorSurfaceLight">#344955</color>
     <color name="opaqueTextColor">#626172</color>
-    <color name="colorAccent">#868ac3</color>
-    <color name="allTabColor">#73c095</color>
-    <color name="textColor">#EDEDEE</color>
-    <color name="text_color_primary">#EDEDEE</color>
-    <color name="text_color_secondary">#ABEDEDEE</color>
-    <color name="text_color_tertiary">@color/opaqueTextColor</color>
-
-    <!--<color name="allTabColor">#05E29A</color>
-    <color name="colorAccent">#6F6FC8</color>
-    <color name="colorOnSurface">#2f2d56</color>
-    <color name="colorBackground">#1a1834</color>
-    <color name="textColor">#ededf2</color>
-    <color name="text_color_primary">#ededf2</color>
-    <color name="text_color_secondary">#CCEDEDF2</color>
-    <color name="opaqueTextColor">#626172</color>
-    <color name="colorSurfaceLight">#344955</color>-->
-
-
+    <color name="colorAccent">#272636</color>
+    <color name="cardColor">#737093</color>
+    <color name="allTabColor">#272636</color>
+    <color name="textColor">#1F1D2B</color>
+    <color name="text_color_primary">#1F1D2B</color>
+    <color name="text_color_secondary">#272636</color>
+    <color name="text_color_tertiary">#6A6977</color>
 
 </resources>
 

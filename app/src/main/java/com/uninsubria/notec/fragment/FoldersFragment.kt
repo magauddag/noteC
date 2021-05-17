@@ -98,7 +98,6 @@ class FoldersFragment : Fragment() {
             R.id.mi_search -> return false
             R.id.mi_settings -> return false
             R.id.mi_delete -> showDeleteFolderDialog()
-            R.id.mi_select_all -> Toast.makeText(this.context, "selezionate", Toast.LENGTH_SHORT).show()
         }
         return true
     }

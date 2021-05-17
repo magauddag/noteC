@@ -51,13 +51,5 @@
     </string>
     <string name="default_cant_be_deleted">This category can\'t be deleted</string>
     <string name="image_deleted">Image deleted</string>
-    <string name="appearance">Appearance</string>
-    <string name="defaultTheme" translatable="false">DEFAULT</string>
-    <string name="dark" translatable="false">DARK</string>
-    <string name="light" translatable="false">LIGHT</string>
-    <string name="version">"version 1.0"</string>
-    <string name="default_description">Use your device default theme</string>
-    <string name="light_description">Always use light theme</string>
-    <string name="dark_description">Always use dark theme</string>
 
 </resources>

@@ -8,8 +8,7 @@
 
     <uses-feature
             android:name="android.hardware.camera"
-            android:required="true"
-            />
+            android:required="true"/>
     <uses-feature
             android:name="android.hardware.camera.autofocus"
             android:required="false"/>
@@ -21,17 +20,33 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/splashScreenTheme">
-        <activity android:name=".activities.ImageActivity">
+        <activity android:name=".activities.SettingsActivity">
         </activity>
-        <activity android:name=".activities.FilteredNotesActivity">
+        <activity
+                android:name=".activities.ImageActivity"
+                android:configChanges="orientation"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".activities.FilteredNotesActivity"
+                android:configChanges="orientation"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".activities.SearchableActivity"
-                android:noHistory="true">
+                android:configChanges="orientation"
+                android:noHistory="true"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activities.CreateNoteActivity">
+        <activity
+                android:name=".activities.CreateNoteActivity"
+                android:configChanges="orientation"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".activities.MainActivity">
+        <activity
+                android:name=".activities.MainActivity"
+                android:configChanges="orientation"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -49,7 +64,6 @@
                     android:resource="@xml/file_paths">
             </meta-data>
         </provider>
-
     </application>
 
 </manifest>
