@@ -228,6 +228,4 @@ class NotesFragment : Fragment() {
                 }
             }
     }
-
-
 }

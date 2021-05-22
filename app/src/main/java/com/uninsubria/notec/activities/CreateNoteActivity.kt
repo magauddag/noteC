@@ -18,6 +18,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.ListPopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -84,7 +85,6 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
         manageLinksEditText()
 
         tv_date.text = util.getData()
-
         //make rounded border for inserted images
         addedImage.clipToOutline = true
 
@@ -127,8 +127,13 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
                     updateItem()
                 else
                     insertDataToDatabase()
+
+                item.isEnabled = false
             }
-            R.id.mi_share -> shareNote()
+            R.id.mi_share -> {
+                shareNote()
+                item.isEnabled = false
+            }
         }
         return true
     }
@@ -539,9 +544,9 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
     private fun askCameraPermission() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(
-                    this,
+                    this@CreateNoteActivity,
                     arrayOf(Manifest.permission.CAMERA),
                     IntentId.CAMERA_PERM_CODE
             )
@@ -551,10 +556,10 @@ class CreateNoteActivity : AppCompatActivity(), AddCategoryDialog.NoticeDialogLi
 
     private fun askGalleryPermission() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission_group.STORAGE),
+                this@CreateNoteActivity,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                     IntentId.GALLERY_PERM_CODE
             )
         } else
